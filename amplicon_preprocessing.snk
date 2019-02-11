@@ -1,0 +1,46 @@
+# Snakefile for running Trimmomatic and PEAR
+# before QIIME2
+
+import pandas as pd
+
+configfile: "config.yaml"
+
+ruleorder: run_trimmomatic > run_pear
+
+SAMPLE = pd.read_table(config["samples"]).set_index("samples", drop=False)
+
+rule all:
+    input:
+        expand('{sample}.assembled.fastq',  sample = SAMPLE.index),
+        expand('{sample}_pear.log', sample = SAMPLE.index)
+
+rule run_trimmomatic:
+    input:
+        forward = lambda wilcards: SAMPLE.loc[wilcards.sample, 'forward'],
+        reverse = lambda wilcards: SAMPLE.loc[wilcards.sample, 'reverse']
+
+    output:
+        forward_paired='{sample}_R1.paired.fastq.gz',
+	forward_unpaired='{sample}_R1.unpaired.fastq.gz',
+	reverse_paired='{sample}_R2.paired.fastq.gz',
+	reverse_unpaired='{sample}_R2.unpaired.fastq.gz',
+	log='{sample}_trimmomatic.log'
+
+    shell:
+        'trimmomatic-0.33.jar PE -threads 8 -phred33 {input.forward} {input.reverse} {output.forward_paired} {output.forward_unpaired} {output.reverse_paired} {output.reverse_unpaired} ILLUMINACLIP:primer_seqs.txt:2:30:10:3:TRUE TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:36 > {output.log}'
+
+rule run_pear:
+    input:
+        read1='{sample}_R1.paired.fastq.gz',
+        read2='{sample}_R2.paired.fastq.gz'
+
+    params:
+        prefix='{sample}'
+    
+    output:	
+        merged='{sample}.assembled.fastq',
+        log='{sample}_pear.log'
+
+    shell:
+        '/usr/local/PEAR/bin/pear-0.9.6-bin-64 -f {input.read1} -r {input.read2} -o {params.prefix} -j 8 > {output.log}'
+
