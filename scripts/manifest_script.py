@@ -41,26 +41,27 @@ except:
 csv_list = []
 
 # read in the files and use RegEx on filenames to filter
-for root, dirs, files in os.walk(dir_name):
-    for filename in files:
+for root, dirs, files in os.walk(dir_name, followlinks=True):
+    for x in dirs:
+        dirs.remove(x)
+    for x in files:
         # print(filename)
-        if os.DirEntry.is_file:
-            if re.search("(?<=FLD\d{4}).\w*.fastq.gz$", filename) != None:
-                temp = re.search("(?<=FLD\d{4}).\w*.fastq.gz$", filename)
-                sample_name = temp.group()
-                sample_name = sample_name.replace('.','')
-                sample_name = sample_name.replace('fastqgz','')
-                sample_name = sample_name.replace('_R1','')
-                sample_name = sample_name.replace('_R2','')
-                #print(sampleName)
-                abs_path = os.path.join(root, filename)
-                direction = re.search("R\d", filename)
-                if direction.group() == "R1":
-                    temp = "forward"
-                else:
-                    temp = "reverse"
-                    csv_list.append([sample_name, abs_path, temp])
+        if re.search("(?<=FLD\d{4}).\w*.fastq.gz$", x) != None:
+            temp = re.search("(?<=FLD\d{4}).\w*.fastq.gz$", x)
+            sample_name = temp.group()
+            sample_name = sample_name.replace('.','')
+            sample_name = sample_name.replace('fastqgz','')
+            sample_name = sample_name.replace('_R1','')
+            sample_name = sample_name.replace('_R2','')
+            #print(sampleName)
+            abs_path = os.path.join(root, x)
+            direction = re.search("R\d", x)
+            if direction.group() == "R1":
+                temp = "forward"
             else:
+                temp = "reverse"
+            csv_list.append([sample_name, abs_path, temp])
+        else:
                 continue
 
 #start the .csv document
