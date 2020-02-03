@@ -105,11 +105,6 @@ rule import_fastq_se_demux:
         "--output-path {output} "
         "--input-format SingleEndFastqManifestPhred33"
 
-# custom rule to generate a manifest file from the filenames in data-00
-rule generate_manifest_pe_file:
-    shell:
-        "python3 $PWD/scripts/manifest_script.py $PWD/00-data"
-
 rule import_fastq_pe_demux:
     input:
         config["manifest_pe"]

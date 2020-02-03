@@ -63,7 +63,7 @@ def create_list_from_files(dir_name):
 #start the .csv document
 def create_csv_from_list(csv_list):
     print("Creating the .csv file in the PWD", "\n")
-    with open('manifest.csv', 'w') as csvfile:
+    with open('00-data/manifest_pe.csv', 'w') as csvfile:
         filewriter = csv.writer(csvfile, delimiter=',', quotechar='|',
             quoting=csv.QUOTE_MINIMAL)
         filewriter.writerow(['sample-id', 'absolute-filepath', 'direction'])
