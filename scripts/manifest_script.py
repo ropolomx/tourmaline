@@ -6,9 +6,13 @@ Genome Quebec naming style
 """
 
 # Built-in/Generic Imports
-import os, sys, argparse
+import os
+import sys
+import argparse
 # Libs
-import csv, re, unittest, timeit
+import csv
+import re
+
 
 __author__ = 'Mathew Richards'
 __copyright__ = 'Copyright 2020, AAFC-AAC'
@@ -21,36 +25,45 @@ __status__ = 'Complete'
 
 print("\n", "****Manifest Script****", "\n")
 
-# argparse section for command line arguments
-parser = argparse.ArgumentParser(description='Create a qiime2 manifest file')
-parser.add_argument('directory',
-            help='The directory path where your FASTQ files are located')
-args = parser.parse_args()
 
-try:
-    dir_name = args.directory
-    print("The entered directory is:", dir_name, "\n")
-except:
-    print('ERROR: Enter path to data in command line argument')
+def setup():
+    """Get the directory path from command line arg"""
+    # argparse section for command line arguments
+    parser = argparse.ArgumentParser(description='Create a qiime2 '
+                                     'manifest file')
+    parser.add_argument('directory',
+                        help='The directory path where '
+                        'your FASTQ files are located')
+    args = parser.parse_args()
 
-csv_list = []
-# read in the files and use RegEx on filenames to filter
+    try:
+        dir_name = args.directory
+        print("The entered directory is:", dir_name, "\n")
+    except OSError:
+        print('ERROR: Enter path to data in command line argument')
+
+    return dir_name
+
+
+# read in the files and use RegEx on file names to filter
 def create_list_from_files(dir_name):
+    """Using the directory name, create a list of the
+    files and their info"""
+    csv_list = []
     for root, dirs, files in os.walk(dir_name, followlinks=True):
-        for x in dirs:
-            dirs.remove(x)
-        for x in files:
+        for _x in dirs:
+            dirs.remove(_x)
+        for _x in files:
             # print(filename)
-            if re.search("(?<=FLD\d{4}).\w*.fastq.gz$", x) != None:
-                temp = re.search("(?<=FLD\d{4}).\w*.fastq.gz$", x)
+            if re.search(r"(?<=FLD\d{4}).\w*.fastq.gz$", _x) is not None:
+                temp = re.search(r"(?<=FLD\d{4}).\w*.fastq.gz$", _x)
                 sample_name = temp.group()
-                sample_name = sample_name.replace('.','')
-                sample_name = sample_name.replace('fastqgz','')
-                sample_name = sample_name.replace('_R1','')
-                sample_name = sample_name.replace('_R2','')
-                #print(sampleName)
-                abs_path = os.path.join(root, x)
-                direction = re.search("R\d", x)
+                sample_name = sample_name.replace('.', '')
+                sample_name = sample_name.replace('fastqgz', '')
+                sample_name = sample_name.replace('_R1', '')
+                sample_name = sample_name.replace('_R2', '')
+                abs_path = os.path.join(root, _x)
+                direction = re.search(r"R\d", _x)
                 if direction.group() == "R1":
                     temp = "forward"
                 else:
@@ -60,17 +73,31 @@ def create_list_from_files(dir_name):
                 continue
     return csv_list
 
-#start the .csv document
+
+# start the .csv document
 def create_csv_from_list(csv_list):
+    """
+    Create the csv file from the already created list of
+    sample names, absolute paths, and strand direction
+    """
     print("Creating the .csv file in the PWD", "\n")
     with open('00-data/manifest_pe.csv', 'w') as csvfile:
         filewriter = csv.writer(csvfile, delimiter=',', quotechar='|',
-            quoting=csv.QUOTE_MINIMAL)
+                                quoting=csv.QUOTE_MINIMAL)
         filewriter.writerow(['sample-id', 'absolute-filepath', 'direction'])
-        for i in range(len(csv_list)):
-            filewriter.writerow(csv_list[i])
+        for line in csv_list:
+            filewriter.writerow(line)
+
 
 # execute the functions
-create_csv_from_list(create_list_from_files(dir_name))
+def main():
+    """Run the other functions"""
+    dir_name = setup()
+    csv_list = create_list_from_files(dir_name)
+    create_csv_from_list(csv_list)
 
-exit()
+
+if __name__ == "__main__":
+    main()
+
+sys.exit()
