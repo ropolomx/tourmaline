@@ -116,7 +116,7 @@ rule import_fastq_pe_demux:
     output:
         "01-imported/fastq_pe.qza"
     shell:
-        "qiime tools import "
+        "time qiime tools import "
         "--type 'SampleData[PairedEndSequencesWithQuality]' "
         "--input-path {input} "
         "--output-path {output} "
@@ -222,7 +222,7 @@ rule denoise_dada2_se:
         repseqs="02-denoised/dada2-se/representative_sequences.qza",
         stats="02-denoised/dada2-se/stats.qza"
     shell:
-        "qiime dada2 denoise-single "
+        "time qiime dada2 denoise-single "
         "--i-demultiplexed-seqs {input} "
         "--p-trunc-len {params.trunclen} "
         "--p-trim-left {params.trimleft} "
@@ -258,7 +258,7 @@ rule denoise_dada2_pe:
         repseqs="02-denoised/dada2-pe/representative_sequences.qza",
         stats="02-denoised/dada2-pe/stats.qza"
     shell:
-        "qiime dada2 denoise-paired "
+        "time qiime dada2 denoise-paired "
         "--i-demultiplexed-seqs {input} "
         "--p-trunc-len-f {params.trunclenf} "
         "--p-trunc-len-r {params.trunclenr} "
@@ -294,10 +294,11 @@ rule unzip_table_to_biom:
         "02-denoised/{method}/table.qza"
     output:
         "02-denoised/{method}/table.biom"
+    threads: 1
     shell:
         "unzip -o {input} -d temp; "
         "mv temp/*/data/feature-table.biom {output}; "
-        "/bin/rm -r temp"
+        "rm -r temp"
 
 rule summarize_biom_samples:
     input:
@@ -339,10 +340,11 @@ rule unzip_repseq_to_fasta:
         "02-denoised/{method}/representative_sequences.qza"
     output:
         "02-denoised/{method}/representative_sequences.fasta"
+    threads: 1
     shell:
         "unzip -o {input} -d temp; "
         "mv temp/*/data/dna-sequences.fasta {output}; "
-        "/bin/rm -r temp"
+        "rm -r temp"
 
 rule repseq_detect_amplicon_type:
     input:
@@ -405,6 +407,7 @@ rule feature_classifier_fit_classifier_naive_bayes:
         "qiime feature-classifier fit-classifier-naive-bayes "
         "--i-reference-reads {input.seqs} "
         "--i-reference-taxonomy {input.tax} "
+        "--p-n-jobs 16"
         "--o-classifier {output}"
 
 rule feature_classifier_classify_sklearn:
@@ -414,9 +417,10 @@ rule feature_classifier_classify_sklearn:
     output:
         "03-repseqs/{method}/taxonomy.qza"
     shell:
-        "qiime feature-classifier classify-sklearn "
+        "time qiime feature-classifier classify-sklearn "
         "--i-classifier {input.classifier} "
         "--i-reads {input.repseqs} "
+        "--p-n-jobs 16"
         "--o-classification {output}"
 
 rule visualize_taxonomy:
@@ -528,6 +532,7 @@ rule diversity_alpha_rarefaction:
         maxdepth=config["alpha_max_depth"]
     output:
         "04-diversity/{method}/alpha_rarefaction.qzv"
+    threads: 1
     shell:
         "qiime diversity alpha-rarefaction "
         "--i-table {input.table} "
