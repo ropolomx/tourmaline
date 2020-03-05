@@ -71,6 +71,7 @@ def create_list_from_files(dir_name):
                 csv_list.append([sample_name, abs_path, temp])
             else:
                 continue
+    csv_list.sort(key = lambda x: x[0])
     return csv_list
 
 

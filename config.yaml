@@ -28,8 +28,8 @@ dada2se_n_reads_learn: 1000000
 dada2se_hashed_feature_ids: --p-hashed-feature-ids
 
 # dada2 paired-end
-dada2pe_trunc_len_f: 0
-dada2pe_trunc_len_r: 0
+dada2pe_trunc_len_f: 200
+dada2pe_trunc_len_r: 200
 dada2pe_trim_left_f: 0
 dada2pe_trim_left_r: 0
 dada2pe_max_ee: 2
@@ -41,8 +41,8 @@ dada2pe_n_reads_learn: 1000000
 dada2pe_hashed_feature_ids: --p-hashed-feature-ids
 
 # subsampling
-alpha_max_depth: 5000
-core_sampling_depth: 5000
+alpha_max_depth: 4
+core_sampling_depth: 4
 
 # statistics
 beta_group_column: treatment

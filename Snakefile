@@ -71,7 +71,7 @@ rule dada2_pe_denoise:
         "02-denoised/dada2-pe/table_summary_features.txt",
         "02-denoised/dada2-pe/representative_sequences.qzv",
         "02-denoised/dada2-pe/representative_sequences_amplicon_type.txt",
-        "02-denoised/dada2-pe/representative_sequences_lengths_describe.tsv"
+        "02-denoised/dada2-pe/representative_sequences_lengths_describe.tsv",
 
 rule dada2_pe_diversity:
     input:
@@ -107,6 +107,8 @@ rule import_fastq_se_demux:
 
 # custom rule to generate a manifest file from the filenames in data-00
 rule generate_manifest_pe_file:
+    output:
+        config["manifest_pe"]
     shell:
         "python3 $PWD/scripts/manifest_script.py $PWD/00-data"
 
@@ -256,7 +258,7 @@ rule denoise_dada2_pe:
     output:
         table="02-denoised/dada2-pe/table.qza",
         repseqs="02-denoised/dada2-pe/representative_sequences.qza",
-        stats="02-denoised/dada2-pe/stats.qza"
+        stats="02-denoised/dada2-pe/stats.qza",
     shell:
         "time qiime dada2 denoise-paired "
         "--i-demultiplexed-seqs {input} "
@@ -275,10 +277,21 @@ rule denoise_dada2_pe:
         "--o-table {output.table} "
         "--o-representative-sequences {output.repseqs} "
         "--o-denoising-stats {output.stats} "
-        "--verbose"
+        "--verbose "
+
+rule visualize demux:
+    input:
+        "01-imported/fastq_pe.qza"
+    output:
+        "01-imported/fastq_pe.qzv"
+    shell:
+        "qiime demux summarize "
+        "--i-data {input} "
+        "--o-visualization {output}"
 
 rule visualize_table:
     input:
+        "01-imported/fastq_pe.qzv",
         table="02-denoised/{method}/table.qza",
         metadata=config["metadata"]
     output:
@@ -296,9 +309,10 @@ rule unzip_table_to_biom:
         "02-denoised/{method}/table.biom"
     threads: 1
     shell:
-        "unzip -o {input} -d temp; "
-        "mv temp/*/data/feature-table.biom {output}; "
-        "rm -r temp"
+        "mkdir temp0; "
+        "unzip -o {input} -d temp0; "
+        "mv -v temp0/*/data/feature-table.biom {output} || exit 0; "
+        "rm -rf temp0; "
 
 rule summarize_biom_samples:
     input:
@@ -323,7 +337,7 @@ rule summarize_biom_features:
         "--input-fp {input} "
         "--output-fp {output}; "
         "cat {output} | sed 's/observation/feature/g' | sed 's/Counts\/sample/Counts\/feature/g' > temp; "
-        "mv temp {output}"
+        "mv temp {output} "
 
 rule visualize_repseqs:
     input:
@@ -342,9 +356,10 @@ rule unzip_repseq_to_fasta:
         "02-denoised/{method}/representative_sequences.fasta"
     threads: 1
     shell:
-        "unzip -o {input} -d temp; "
-        "mv temp/*/data/dna-sequences.fasta {output}; "
-        "rm -r temp"
+        "mkdir temp1; "
+        "unzip -o {input} -d temp1; "
+        "mv -v temp1/*/data/dna-sequences.fasta {output} || exit 0; "
+        "rm -rf temp1 " 
 
 rule repseq_detect_amplicon_type:
     input:
@@ -407,7 +422,6 @@ rule feature_classifier_fit_classifier_naive_bayes:
         "qiime feature-classifier fit-classifier-naive-bayes "
         "--i-reference-reads {input.seqs} "
         "--i-reference-taxonomy {input.tax} "
-        "--p-n-jobs 16"
         "--o-classifier {output}"
 
 rule feature_classifier_classify_sklearn:
@@ -420,7 +434,7 @@ rule feature_classifier_classify_sklearn:
         "time qiime feature-classifier classify-sklearn "
         "--i-classifier {input.classifier} "
         "--i-reads {input.repseqs} "
-        "--p-n-jobs 16"
+        "--p-n-jobs -2 "
         "--o-classification {output}"
 
 rule visualize_taxonomy:
@@ -500,10 +514,12 @@ rule unzip_alignment_to_fasta:
         "03-repseqs/{method}/masked_aligned_representative_sequences.qza"
     output:
         "03-repseqs/{method}/aligned_dna_sequences.fasta"
+    threads: 1
     shell:
-        "unzip -o {input} -d temp; "
-        "mv temp/*/data/aligned-dna-sequences.fasta {output}; "
-        "/bin/rm -r temp"
+        "mkdir temp2; "
+        "unzip -o {input} -d temp2; "
+        "mv -v temp2/*/data/aligned-dna-sequences.fasta {output} || exit 0; "
+        "rm -rf temp2; "
 
 rule alignment_count_gaps:
     input:
@@ -532,7 +548,6 @@ rule diversity_alpha_rarefaction:
         maxdepth=config["alpha_max_depth"]
     output:
         "04-diversity/{method}/alpha_rarefaction.qzv"
-    threads: 1
     shell:
         "qiime diversity alpha-rarefaction "
         "--i-table {input.table} "
