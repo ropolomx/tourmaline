@@ -311,7 +311,7 @@ rule unzip_table_to_biom:
     shell:
         "mkdir temp0; "
         "unzip -o {input} -d temp0; "
-        "mv -v temp0/*/data/feature-table.biom {output} || exit 0; "
+        "mv -v temp0/*/data/feature-table.biom {output}; "
         "rm -rf temp0; "
 
 rule summarize_biom_samples:
@@ -358,7 +358,7 @@ rule unzip_repseq_to_fasta:
     shell:
         "mkdir temp1; "
         "unzip -o {input} -d temp1; "
-        "mv -v temp1/*/data/dna-sequences.fasta {output} || exit 0; "
+        "mv -v temp1/*/data/dna-sequences.fasta {output}; "
         "rm -rf temp1 " 
 
 rule repseq_detect_amplicon_type:
@@ -518,7 +518,7 @@ rule unzip_alignment_to_fasta:
     shell:
         "mkdir temp2; "
         "unzip -o {input} -d temp2; "
-        "mv -v temp2/*/data/aligned-dna-sequences.fasta {output} || exit 0; "
+        "mv -v temp2/*/data/aligned-dna-sequences.fasta {output}; "
         "rm -rf temp2; "
 
 rule alignment_count_gaps:
