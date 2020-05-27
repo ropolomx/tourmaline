@@ -61,8 +61,9 @@ def create_list_from_files(dir_name):
                 sample_name = sample_name.replace('fastqgz', '')
                 sample_name = sample_name.replace('_R1', '')
                 # sample_name = sample_name.replace('_R2', '')
-                f_abs_path = os.path.join(root, _x)
-                r_abs_path = os.path.join(root, r_abs_path)
+                cwd = os.getcwd()
+                f_abs_path = cwd + os.path.join(root, _x)
+                r_abs_path = cwd + os.path.join(root, r_abs_path)
                 tsv_list.append([sample_name, f_abs_path, r_abs_path])
             else:
                 if re.search(r'.*?_S\d*_L001_R1', _x) is not None:
@@ -70,8 +71,9 @@ def create_list_from_files(dir_name):
                     sample_name = re.search(r'.*?_S', _x).group()
                     sample_name = sample_name.replace('_S','')
                     # print(sample_name)
-                    f_abs_path = os.path.join(root, _x)
-                    r_abs_path = os.path.join(root, _x)
+                    cwd = os.getcwd()
+                    f_abs_path = cwd + os.path.join(root, _x)
+                    r_abs_path = cwd + os.path.join(root, _x)
                     r_abs_path = r_abs_path.replace('R1', 'R2')
                     tsv_list.append([sample_name, f_abs_path, r_abs_path])
     tsv_list.sort(key = lambda x: x[0])
