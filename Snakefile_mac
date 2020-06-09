@@ -1,0 +1,952 @@
+import pandas as pd
+from tabulate import tabulate
+
+# GLOBALS ---------------------------------------------------------------------
+
+configfile: "config.yaml"
+
+# PSEUDO-RULES ----------------------------------------------------------------
+
+rule deblur_se_denoise:
+    input:
+        "01-imported/fastq_illumina_run.log",
+        "01-imported/fastq_pe_count_describe.md",
+        "02-denoised/deblur-se/table.qzv",
+        "02-denoised/deblur-se/table_summary_samples.txt",
+        "02-denoised/deblur-se/table_summary_features.txt",
+        "02-denoised/deblur-se/representative_sequences.qzv",
+        "02-denoised/deblur-se/representative_sequences_amplicon_type.txt",
+        "02-denoised/deblur-se/representative_sequences_lengths_describe.md",
+        "02-denoised/deblur-se/representative_sequences_md5_status.txt"
+
+rule deblur_se_diversity:
+    input:
+        "03-repseqs/deblur-se/taxonomy.qzv",
+        "04-diversity/deblur-se/taxa_barplot.qzv",
+        "03-repseqs/deblur-se/rooted_tree.qza",
+        "03-repseqs/deblur-se/aligned_dna_sequences_gaps_describe.md",
+        "04-diversity/deblur-se/alpha_rarefaction.qzv",
+        "04-diversity/deblur-se/unweighted_unifrac_emperor.qzv",
+        "04-diversity/deblur-se/faith_pd_group_significance.qzv",
+        "04-diversity/deblur-se/observed_otus_group_significance.qzv",
+        "04-diversity/deblur-se/shannon_group_significance.qzv",
+        "04-diversity/deblur-se/evenness_group_significance.qzv",
+        "04-diversity/deblur-se/unweighted_unifrac_group_significance.qzv"
+
+rule deblur_se_report:
+    input:
+        "05-reports/report_deblur-se.html"
+
+# -----------------------------------------------------------------------------
+
+rule dada2_se_denoise:
+    input:
+        "01-imported/fastq_illumina_run.log",
+        "01-imported/fastq_pe_count_describe.md",
+        "02-denoised/dada2-se/table.qzv",
+        "02-denoised/dada2-se/table_summary_samples.txt",
+        "02-denoised/dada2-se/table_summary_features.txt",
+        "02-denoised/dada2-se/representative_sequences.qzv",
+        "02-denoised/dada2-se/representative_sequences_amplicon_type.txt",
+        "02-denoised/dada2-se/representative_sequences_lengths_describe.md",
+        "02-denoised/dada2-se/representative_sequences_md5_status.txt"
+
+rule dada2_se_diversity:
+    input:
+        "03-repseqs/dada2-se/taxonomy.qzv",
+        "04-diversity/dada2-se/taxa_barplot.qzv",
+        "03-repseqs/dada2-se/rooted_tree.qza",
+        "03-repseqs/dada2-se/aligned_dna_sequences_gaps_describe.md",
+        "04-diversity/dada2-se/alpha_rarefaction.qzv",
+        "04-diversity/dada2-se/unweighted_unifrac_emperor.qzv",
+        "04-diversity/dada2-se/faith_pd_group_significance.qzv",
+        "04-diversity/dada2-se/observed_otus_group_significance.qzv",
+        "04-diversity/dada2-se/shannon_group_significance.qzv",
+        "04-diversity/dada2-se/evenness_group_significance.qzv",
+        "04-diversity/dada2-se/unweighted_unifrac_group_significance.qzv"
+
+rule dada2_se_report:
+    input:
+        "05-reports/report_dada2-se.html"
+
+# -----------------------------------------------------------------------------
+
+rule dada2_pe_denoise:
+    input:
+        "01-imported/fastq_illumina_run.log",
+        "01-imported/fastq_pe_count_describe.md",
+        "02-denoised/dada2-pe/table.qzv",
+        "02-denoised/dada2-pe/table_summary_samples.txt",
+        "02-denoised/dada2-pe/table_summary_features.txt",
+        "02-denoised/dada2-pe/representative_sequences.qzv",
+        "02-denoised/dada2-pe/representative_sequences_amplicon_type.txt",
+        "02-denoised/dada2-pe/representative_sequences_lengths_describe.md",
+        "02-denoised/dada2-pe/representative_sequences_md5_status.txt"
+
+rule dada2_pe_diversity:
+    input:
+        "03-repseqs/dada2-pe/taxonomy.qzv",
+        "04-diversity/dada2-pe/taxa_barplot.qzv",
+        "03-repseqs/dada2-pe/rooted_tree.qza",
+        "03-repseqs/dada2-pe/aligned_dna_sequences_gaps_describe.md",
+        "04-diversity/dada2-pe/alpha_rarefaction.qzv",
+        "04-diversity/dada2-pe/unweighted_unifrac_emperor.qzv",
+        "04-diversity/dada2-pe/faith_pd_group_significance.qzv",
+        "04-diversity/dada2-pe/observed_otus_group_significance.qzv",
+        "04-diversity/dada2-pe/shannon_group_significance.qzv",
+        "04-diversity/dada2-pe/evenness_group_significance.qzv",
+        "04-diversity/dada2-pe/unweighted_unifrac_group_significance.qzv"
+
+rule dada2_pe_report:
+    input:
+        "05-reports/report_dada2-pe.html"
+
+# RULES -----------------------------------------------------------------------
+
+rule import_fastq_se_demux:
+    input:
+        config["manifest_se"]
+    output:
+        "01-imported/fastq_se.qza"
+    shell:
+        "qiime tools import "
+        "--type 'SampleData[SequencesWithQuality]' "
+        "--input-path {input} "
+        "--output-path {output} "
+        "--input-format SingleEndFastqManifestPhred33"
+
+rule import_fastq_pe_demux:
+    input:
+        config["manifest_pe"]
+    output:
+        "01-imported/fastq_pe.qza"
+    shell:
+        "qiime tools import "
+        "--type 'SampleData[PairedEndSequencesWithQuality]' "
+        "--input-path {input} "
+        "--output-path {output} "
+        "--input-format PairedEndFastqManifestPhred33"
+
+# mac: gzcat (zcat requires extension .Z) / linux: zcat
+# change gzcat/zcat to cat if fastq files are not gzipped (but they should be)
+rule check_illumina_run:
+    input:
+        config["manifest_pe"]
+    output:
+        runs="01-imported/fastq_illumina_run.txt",
+        log="01-imported/fastq_illumina_run.log"
+    shell:
+        "set +o pipefail; "
+        "for line in `tail -n +2 {input} | cut -d',' -f2`; "
+        "do echo -n $line; "
+        "echo -n ','; "
+        "gzcat $line | head -n 1 | sed 's/^@//' | cut -d ':' -f1-3; "
+        "done > {output.runs}; "
+        "echo -n 'Number of Illumina runs in {input}:' > {output.log}; cat {output.runs} | cut -d',' -f2 | sort | uniq | wc -l >> {output.log}"
+
+# mac: gzcat (zcat requires extension .Z) / linux: zcat
+# change gzcat/zcat to cat if fastq files are not gzipped (but they should be)
+rule count_fastq_pe_demux:
+    input:
+        config["manifest_pe"]
+    output:
+        "01-imported/fastq_pe_count.csv"
+    shell:
+        "for line in `tail -n +2 {input} | cut -d',' -f2`; "
+        "do echo -n $line; "
+        "echo -n ','; "
+        "gzcat $line | echo $((`wc -l`/4)); "
+        "done > {output}"
+
+rule fastq_pe_count_describe:
+    input:
+        "01-imported/fastq_pe_count.csv"
+    output:
+        "01-imported/fastq_pe_count_describe.md"
+    run:
+        s = pd.read_csv(input[0], header=None)
+        t = s.describe()
+        outstr = tabulate(t.iloc[1:], tablefmt="pipe", headers=['Statistic (n=%s)' % t.iloc[0].values[0].astype(int), 'Fastq sequences per sample'])
+        with open(output[0], 'w') as target:
+            target.write(outstr)
+
+rule import_ref_seqs:
+    input:
+        config["refseqs"]
+    output:
+        "01-imported/refseqs.qza"
+    shell:
+        "qiime tools import "
+        "--type 'FeatureData[Sequence]' "
+        "--input-path {input} "
+        "--output-path {output}"
+
+rule import_ref_tax:
+    input:
+        config["reftax"]
+    output:
+        "01-imported/reftax.qza"
+    shell:
+        "qiime tools import "
+        "--type 'FeatureData[Taxonomy]' "
+        '--input-format HeaderlessTSVTaxonomyFormat '
+        "--input-path {input} "
+        "--output-path {output}"
+
+rule denoise_deblur_se:
+    input:
+        seqs="01-imported/fastq_se.qza",
+        refseqs="01-imported/refseqs.qza"
+    params:
+        trimlength=config["deblur_trim_length"],
+        samplestats=config["deblur_sample_stats"],
+        meanerror=config["deblur_mean_error"],
+        indelprob=config["deblur_indel_prob"],
+        indelmax=config["deblur_indel_max"],
+        minreads=config["deblur_min_reads"],
+        minsize=config["deblur_min_size"],
+        jobstostart=config["deblur_jobs_to_start"],
+        hashedfeatureids=config["deblur_hashed_feature_ids"]
+    output:
+        table="02-denoised/deblur-se/table.qza",
+        repseqs="02-denoised/deblur-se/representative_sequences.qza",
+        stats="02-denoised/deblur-se/stats.qza"
+    shell:
+        "qiime deblur denoise-other "
+        "--i-demultiplexed-seqs {input.seqs} "
+        "--i-reference-seqs {input.refseqs} "
+        "--p-trim-length {params.trimlength} "
+        "{params.samplestats} "
+        "--p-mean-error {params.meanerror} "
+        "--p-indel-prob {params.indelprob} "
+        "--p-indel-max {params.indelmax} "
+        "--p-min-reads {params.minreads} "
+        "--p-min-size {params.minsize} "
+        "--p-jobs-to-start {params.jobstostart} "
+        "{params.hashedfeatureids} "        
+        "--o-table {output.table} "
+        "--o-representative-sequences {output.repseqs} "
+        "--o-stats {output.stats} "
+        "--verbose"
+
+rule denoise_dada2_se:
+    input:
+        "01-imported/fastq_se.qza"
+    params:
+        trunclen=config["dada2se_trunc_len"],
+        trimleft=config["dada2se_trim_left"],
+        maxee=config["dada2se_max_ee"],
+        truncq=config["dada2se_trunc_q"],
+        chimeramethod=config["dada2se_chimera_method"],
+        minfoldparentoverabundance=config["dada2se_min_fold_parent_over_abundance"],
+        nthreads=config["dada2se_n_threads"],
+        nreadslearn=config["dada2se_n_reads_learn"],
+        hashedfeatureids=config["dada2se_hashed_feature_ids"]
+    output:
+        table="02-denoised/dada2-se/table.qza",
+        repseqs="02-denoised/dada2-se/representative_sequences.qza",
+        stats="02-denoised/dada2-se/stats.qza"
+    shell:
+        "qiime dada2 denoise-single "
+        "--i-demultiplexed-seqs {input} "
+        "--p-trunc-len {params.trunclen} "
+        "--p-trim-left {params.trimleft} "
+        "--p-max-ee {params.maxee} "
+        "--p-trunc-q {params.truncq} "
+        "--p-chimera-method {params.chimeramethod} "
+        "--p-min-fold-parent-over-abundance {params.minfoldparentoverabundance} "
+        "--p-n-threads {params.nthreads} "
+        "--p-n-reads-learn {params.nreadslearn} "
+        "{params.hashedfeatureids} "
+        "--o-table {output.table} "
+        "--o-representative-sequences {output.repseqs} "
+        "--o-denoising-stats {output.stats} "
+        "--verbose"
+
+rule denoise_dada2_pe:
+    input:
+        "01-imported/fastq_pe.qza"
+    params:
+        trunclenf=config["dada2pe_trunc_len_f"],
+        trunclenr=config["dada2pe_trunc_len_r"],
+        trimleftf=config["dada2pe_trim_left_f"],
+        trimleftr=config["dada2pe_trim_left_r"],
+        maxeef=config["dada2pe_max_ee_f"],
+        maxeer=config["dada2pe_max_ee_r"],
+        truncq=config["dada2pe_trunc_q"],
+        chimeramethod=config["dada2pe_chimera_method"],
+        minfoldparentoverabundance=config["dada2pe_min_fold_parent_over_abundance"],
+        nthreads=config["dada2pe_n_threads"],
+        nreadslearn=config["dada2pe_n_reads_learn"],
+        hashedfeatureids=config["dada2pe_hashed_feature_ids"]
+    output:
+        table="02-denoised/dada2-pe/table.qza",
+        repseqs="02-denoised/dada2-pe/representative_sequences.qza",
+        stats="02-denoised/dada2-pe/stats.qza"
+    shell:
+        "qiime dada2 denoise-paired "
+        "--i-demultiplexed-seqs {input} "
+        "--p-trunc-len-f {params.trunclenf} "
+        "--p-trunc-len-r {params.trunclenr} "
+        "--p-trim-left-f {params.trimleftf} "
+        "--p-trim-left-r {params.trimleftr} "
+        "--p-max-ee-f {params.maxeef} "
+        "--p-max-ee-r {params.maxeer} "
+        "--p-trunc-q {params.truncq} "
+        "--p-chimera-method {params.chimeramethod} "
+        "--p-min-fold-parent-over-abundance {params.minfoldparentoverabundance} "
+        "--p-n-threads {params.nthreads} "
+        "--p-n-reads-learn {params.nreadslearn} "
+        "{params.hashedfeatureids} "
+        "--o-table {output.table} "
+        "--o-representative-sequences {output.repseqs} "
+        "--o-denoising-stats {output.stats} "
+        "--verbose"
+
+rule visualize_table:
+    input:
+        table="02-denoised/{method}/table.qza",
+        metadata=config["metadata"]
+    output:
+        "02-denoised/{method}/table.qzv"
+    shell:
+        "qiime feature-table summarize "
+        "--i-table {input.table} "
+        "--m-sample-metadata-file {input.metadata} "
+        "--o-visualization {output}"
+
+rule unzip_table_to_biom:
+    input:
+        "02-denoised/{method}/table.qza"
+    output:
+        "02-denoised/{method}/table.biom"
+    shell:
+        "unzip -o {input} -d temp; "
+        "mv temp/*/data/feature-table.biom {output}; "
+        "/bin/rm -r temp"
+
+rule summarize_biom_samples:
+    input:
+        "02-denoised/{method}/table.biom"
+    output:
+        "02-denoised/{method}/table_summary_samples.txt"
+    shell:
+        "biom summarize-table "
+        "--input-fp {input} "
+        "--output-fp {output}; "
+        "cat {output} | sed 's/observation/feature/g' > temp; "
+        "mv temp {output}"
+
+rule summarize_biom_features:
+    input:
+        "02-denoised/{method}/table.biom"
+    output:
+        "02-denoised/{method}/table_summary_features.txt"
+    shell:
+        "biom summarize-table "
+        "--observations "
+        "--input-fp {input} "
+        "--output-fp {output}; "
+        "cat {output} | sed 's/observation/feature/g' | sed 's/Counts\/sample/Counts\/feature/g' > temp; "
+        "mv temp {output}"
+
+rule visualize_repseqs:
+    input:
+        "02-denoised/{method}/representative_sequences.qza"
+    output:
+        "02-denoised/{method}/representative_sequences.qzv"
+    shell:
+        "qiime feature-table tabulate-seqs "
+        "--i-data {input} "
+        "--o-visualization {output}"
+
+rule unzip_repseq_to_fasta:
+    input:
+        "02-denoised/{method}/representative_sequences.qza"
+    output:
+        "02-denoised/{method}/representative_sequences.fasta"
+    shell:
+        "unzip -o {input} -d temp; "
+        "mv temp/*/data/dna-sequences.fasta {output}; "
+        "/bin/rm -r temp"
+
+rule repseq_detect_amplicon_type:
+    input:
+        "02-denoised/{method}/representative_sequences.fasta"
+    output:
+        "02-denoised/{method}/representative_sequences_amplicon_type.txt"
+    shell:
+        "python scripts/detect_amplicon_locus.py -f {input} > {output}"
+
+rule repseq_length_distribution:
+    input:
+        "02-denoised/{method}/representative_sequences.fasta"
+    output:
+        "02-denoised/{method}/representative_sequences_lengths.txt"
+    shell:
+        "perl scripts/fastaLengths.pl {input} > {output}"
+
+rule repseq_length_distribution_describe:
+    input:
+        "02-denoised/{method}/representative_sequences_lengths.txt"
+    output:
+        "02-denoised/{method}/representative_sequences_lengths_describe.md"
+    run:
+        s = pd.read_csv(input[0], header=None, index_col=0)
+        t = s.describe()
+        outstr = tabulate(t.iloc[1:], tablefmt="pipe", headers=['Statistic (n=%s)' % t.iloc[0].values[0].astype(int), 'Sequence length'])
+        with open(output[0], 'w') as target:
+            target.write(outstr)
+
+# mac: md5 / linux: md5sum
+rule check_repseq_md5:
+    input:
+        "02-denoised/{method}/representative_sequences.fasta"
+    output:
+        "02-denoised/{method}/representative_sequences_md5_status.txt"
+    shell:
+        "seq1id=`head -n 1 {input} | sed 's/^>//'`; "
+        "seq1md5=`head -n 2 {input} | tail -n 1 | md5 -q`; "
+        "echo -n First representative sequence ID..... > {output}; "
+        "echo $seq1id >> {output}; "
+        "echo -n First representative sequence MD5.... >> {output}; "
+        "echo $seq1md5 >> {output}; "
+        "if [ '$seq1id' == '$seq1md5' ]; "
+        "then echo 'First representative sequence has ID matching MD5 :)'; "
+        "else echo 'First representative sequence has ID *not* matching MD5 :('; "
+        "fi >> {output}; "
+        "seq2id=`tail -n 2 {input} | head -n 1 | sed 's/^>//'`; "
+        "seq2md5=`tail -n 1 {input} | md5 -q`; "
+        "echo -n Last representative sequence ID..... >> {output}; "
+        "echo $seq2id >> {output}; "
+        "echo -n Last representative sequence MD5.... >> {output}; "
+        "echo $seq2md5 >> {output}; "
+        "if [ '$seq2id' == '$seq2md5' ]; "
+        "then echo 'Last representative sequence has ID matching MD5 :)'; "
+        "else echo 'Last representative sequence has ID *not* matching MD5 :('; "
+        "fi >> {output}"
+
+# add this rule later (to be run after step 2)
+# rule filter_chloroplasts_mitochondria:
+#     input:
+#         [biom]
+#         [repseqs]
+#     output:
+#         [biom]
+#         [repseqs]
+#     shell:
+#         [filter biom based on specific sequences]
+#         [filter repseqs based on specific sequences]
+
+# this rule isn't needed if using blast classification
+# rule feature_classifier_extract_reads (slow) will be skipped
+# unless next rule feature_classifier_fit_classifier_naive_bayes
+# takes input refseqs_extracted.qza
+# rule feature_classifier_extract_reads:
+#     input:
+#         "01-imported/refseqs.qza"
+#     params:
+#         fprimer=config["pcr_primer_fwd"],
+#         rprimer=config["pcr_primer_rev"]
+#     output:
+#         "01-imported/refseqs_extracted.qza"
+#     shell:
+#         "qiime feature-classifier extract-reads "
+#         "--i-sequences {input} "
+#         "--p-f-primer {params.fprimer} "
+#         "--p-r-primer {params.rprimer} "
+#         "--o-reads {output}"
+
+# this rule isn't needed if using blast classification
+# change refseqs.qza to refseqs_extracted.qza
+# for rule feature_classifier_fit_classifier_naive_bayes to run
+# rule feature_classifier_fit_classifier_naive_bayes:
+#     input:
+#         seqs="01-imported/refseqs.qza",
+#         tax="01-imported/reftax.qza"
+#     output:
+#         "01-imported/classifier.qza"
+#     shell:
+#         "qiime feature-classifier fit-classifier-naive-bayes "
+#         "--i-reference-reads {input.seqs} "
+#         "--i-reference-taxonomy {input.tax} "
+#         "--o-classifier {output}"
+
+# this rule isn't needed if using blast classification
+# rule feature_classifier_classify_sklearn:
+#     input:
+#         classifier="01-imported/classifier.qza",
+#         repseqs="02-denoised/{method}/representative_sequences.qza"
+#     output:
+#         "03-repseqs/{method}/taxonomy.qza"
+#     shell:
+#         "qiime feature-classifier classify-sklearn "
+#         "--i-classifier {input.classifier} "
+#         "--i-reads {input.repseqs} "
+#         "--o-classification {output}"
+
+rule feature_classifier_classify_consensus_blast:
+    input:
+        query="02-denoised/{method}/representative_sequences.qza",
+        refseqs="01-imported/refseqs.qza",
+        reftax="01-imported/reftax.qza"
+    output:
+        "03-repseqs/{method}/taxonomy.qza"
+    shell:
+        "qiime feature-classifier classify-consensus-blast "
+        "--i-query {input.query} "
+        "--i-reference-reads {input.refseqs} "
+        "--i-reference-taxonomy {input.reftax} "
+        "--o-classification {output}"
+
+rule visualize_taxonomy:
+    input:
+        "03-repseqs/{method}/taxonomy.qza"
+    output:
+        "03-repseqs/{method}/taxonomy.qzv"
+    shell:
+        "qiime metadata tabulate "
+        "--m-input-file {input} "
+        "--o-visualization {output}"
+
+rule taxa_barplot:
+    input:
+        table="02-denoised/{method}/table.qza",
+        taxonomy="03-repseqs/{method}/taxonomy.qza",
+        metadata=config["metadata"]
+    output:
+        "04-diversity/{method}/taxa_barplot.qzv"
+    shell:
+        "qiime taxa barplot "
+        "--i-table {input.table} "
+        "--i-taxonomy {input.taxonomy} "
+        "--m-metadata-file {input.metadata} "
+        "--o-visualization {output}"
+
+rule alignment_mafft:
+    input:
+        "02-denoised/{method}/representative_sequences.qza"
+    output:
+        "03-repseqs/{method}/aligned_representative_sequences.qza"
+    shell:
+        "qiime alignment mafft "
+        "--i-sequences {input} "
+        "--o-alignment {output}"
+
+rule alignment_mask:
+    input:
+        "03-repseqs/{method}/aligned_representative_sequences.qza"
+    output:
+        "03-repseqs/{method}/masked_aligned_representative_sequences.qza"
+    shell:
+        "qiime alignment mask "
+        "--i-alignment {input} "
+        "--o-masked-alignment {output}"
+
+rule phylogeny_fasttree:
+    input:
+        "03-repseqs/{method}/masked_aligned_representative_sequences.qza"
+    output:
+        "03-repseqs/{method}/unrooted_tree.qza"
+    shell:
+        "qiime phylogeny fasttree "
+        "--i-alignment {input} "
+        "--o-tree {output}"
+
+rule phylogeny_midpoint_root:
+    input:
+        "03-repseqs/{method}/unrooted_tree.qza"
+    output:
+        "03-repseqs/{method}/rooted_tree.qza"
+    shell:
+        "qiime phylogeny midpoint-root "
+        "--i-tree {input} "
+        "--o-rooted-tree {output}"
+
+# skipping this step because tree visualization in q2 is still under construction
+# rule visualize_tree:
+#     input:
+#         "03-repseqs/{method}/rooted_tree.qza"
+#     output:
+#         "03-repseqs/{method}/rooted_tree.qzv"
+#     shell:
+
+rule unzip_alignment_to_fasta:
+    input:
+        "03-repseqs/{method}/masked_aligned_representative_sequences.qza"
+    output:
+        "03-repseqs/{method}/aligned_dna_sequences.fasta"
+    shell:
+        "unzip -o {input} -d temp; "
+        "mv temp/*/data/aligned-dna-sequences.fasta {output}; "
+        "/bin/rm -r temp"
+
+rule alignment_count_gaps:
+    input:
+        "03-repseqs/{method}/aligned_dna_sequences.fasta"
+    output:
+        "03-repseqs/{method}/aligned_dna_sequences_gaps.txt"
+    shell:
+        "cat {input} | grep -v '>' | sed 's/[^-]//g' | awk '{{ print length }}' > {output}"
+
+rule alignment_gaps_distribution_describe:
+    input:
+        "03-repseqs/{method}/aligned_dna_sequences_gaps.txt"
+    output:
+        "03-repseqs/{method}/aligned_dna_sequences_gaps_describe.md"
+    run:
+        s = pd.read_csv(input[0], header=None)
+        t = s.describe()
+        outstr = tabulate(t.iloc[1:], tablefmt="pipe", headers=['Statistic (n=%s)' % t.iloc[0].values[0].astype(int), 'Alignment gaps per sequence'])
+        with open(output[0], 'w') as target:
+            target.write(outstr)
+
+rule diversity_alpha_rarefaction:
+    input:
+        table="02-denoised/{method}/table.qza",
+        phylogeny="03-repseqs/{method}/rooted_tree.qza",
+        metadata=config["metadata"]
+    params:
+        maxdepth=config["alpha_max_depth"]
+    output:
+        "04-diversity/{method}/alpha_rarefaction.qzv"
+    shell:
+        "qiime diversity alpha-rarefaction "
+        "--i-table {input.table} "
+        "--i-phylogeny {input.phylogeny} "
+        "--p-max-depth {params.maxdepth} "
+        "--p-metrics faith_pd "
+        "--p-metrics shannon "
+        "--p-metrics observed_otus "
+        "--p-metrics chao1 "
+        "--m-metadata-file {input.metadata} "
+        "--o-visualization {output}"
+
+rule diversity_core_metrics_phylogenetic:
+    input:
+        table="02-denoised/{method}/table.qza",
+        phylogeny="03-repseqs/{method}/rooted_tree.qza",
+        metadata=config["metadata"]
+    params:
+        samplingdepth=config["core_sampling_depth"]
+    output:
+        rarefiedtable="04-diversity/{method}/rarefied_table.qza",
+        faithpdvector="04-diversity/{method}/faith_pd_vector.qza",        
+        observedotusvector="04-diversity/{method}/observed_otus_vector.qza",
+        shannonvector="04-diversity/{method}/shannon_vector.qza",
+        evennessvector="04-diversity/{method}/evenness_vector.qza",
+        unweightedunifracdistancematrix="04-diversity/{method}/unweighted_unifrac_distance_matrix.qza",
+        weightedunifracdistancematrix="04-diversity/{method}/weighted_unifrac_distance_matrix.qza",
+        jaccarddistancematrix="04-diversity/{method}/jaccard_distance_matrix.qza",
+        braycurtisdistancematrix="04-diversity/{method}/bray_curtis_distance_matrix.qza",
+        unweightedunifracpcoaresults="04-diversity/{method}/unweighted_unifrac_pcoa_results.qza",
+        weightedunifracpcoaresults="04-diversity/{method}/weighted_unifrac_pcoa_results.qza",
+        jaccardpcoaresults="04-diversity/{method}/jaccard_pcoa_results.qza",
+        braycurtispcoaresults="04-diversity/{method}/bray_curtis_pcoa_results.qza",
+        unweightedunifracemperor="04-diversity/{method}/unweighted_unifrac_emperor.qzv",
+        weightedunifracemperor="04-diversity/{method}/weighted_unifrac_emperor.qzv",
+        jaccardemperor="04-diversity/{method}/jaccard_emperor.qzv",
+        braycurtisemperor="04-diversity/{method}/bray_curtis_emperor.qzv"
+    shell:
+        "qiime diversity core-metrics-phylogenetic "
+        "--i-table {input.table} "
+        "--i-phylogeny {input.phylogeny} "
+        "--p-sampling-depth {params.samplingdepth} "
+        "--m-metadata-file {input.metadata} "
+        "--o-rarefied-table {output.rarefiedtable} "
+        "--o-faith-pd-vector {output.faithpdvector} "
+        "--o-observed-otus-vector {output.observedotusvector} "
+        "--o-shannon-vector {output.shannonvector} "
+        "--o-evenness-vector {output.evennessvector} "
+        "--o-unweighted-unifrac-distance-matrix {output.unweightedunifracdistancematrix} "
+        "--o-weighted-unifrac-distance-matrix {output.weightedunifracdistancematrix} "
+        "--o-jaccard-distance-matrix {output.jaccarddistancematrix} "
+        "--o-bray-curtis-distance-matrix {output.braycurtisdistancematrix} "
+        "--o-unweighted-unifrac-pcoa-results {output.unweightedunifracpcoaresults} "
+        "--o-weighted-unifrac-pcoa-results {output.weightedunifracpcoaresults} "
+        "--o-jaccard-pcoa-results {output.jaccardpcoaresults} "
+        "--o-bray-curtis-pcoa-results {output.braycurtispcoaresults} "
+        "--o-unweighted-unifrac-emperor {output.unweightedunifracemperor} "
+        "--o-weighted-unifrac-emperor {output.weightedunifracemperor} "
+        "--o-jaccard-emperor {output.jaccardemperor} "
+        "--o-bray-curtis-emperor {output.braycurtisemperor}"
+
+rule diversity_alpha_group_significance:
+    input:
+        alphadiversity="04-diversity/{method}/{metric}_vector.qza",
+        metadata=config["metadata"]
+    output:
+        "04-diversity/{method}/{metric}_group_significance.qzv"
+    shell:
+        "qiime diversity alpha-group-significance "
+        "--i-alpha-diversity {input.alphadiversity} "
+        "--m-metadata-file {input.metadata} "
+        "--o-visualization {output}"
+
+rule diversity_beta_group_significance:
+    input:
+        distancematrix="04-diversity/{method}/unweighted_unifrac_distance_matrix.qza",
+        metadata=config["metadata"]
+    params:
+        column=config["beta_group_column"]
+    output:
+        "04-diversity/{method}/unweighted_unifrac_group_significance.qzv"
+    shell:
+        "qiime diversity beta-group-significance "
+        "--i-distance-matrix {input.distancematrix} "
+        "--m-metadata-file {input.metadata} "
+        "--m-metadata-column {params.column} "
+        "--o-visualization {output} "
+        "--p-pairwise"
+
+rule summarize_metadata:
+    input:
+        metadata=config["metadata"]
+    output:
+        "05-reports/metadata_summary.md"
+    run:
+        df = pd.read_csv(input.metadata, sep='\t')
+        cols1 = ['project_name', 'experiment_design_description', 
+                 'target_gene', 'target_subfragment', 'pcr_primers', 
+                 'pcr_primer_names', 'platform', 'instrument_model',
+                 'run_center', 'run_date']
+        cols2 = sorted(list(set(df.columns) - set(cols1)))
+        cols = cols1 + cols2
+        df2 = pd.DataFrame(columns =[0,1], index=cols)
+        for col in cols:
+            if col in df.columns:
+                vc = df[col].value_counts()
+                if vc.index.shape == (0,):
+                    df2.loc[col, 0] = '(no values in column)'
+                    df2.loc[col, 1] = '--'
+                else:
+                    df2.loc[col, 0] = vc.index[0]
+                    df2.loc[col, 1] = vc.values[0]
+            else:
+                df2.loc[col, 0] = '(column not provided)'
+                df2.loc[col, 1] = '--'
+        df2.columns = ['Most common value', 'Count']
+        df2.index.name = 'Column name'
+        outstr = tabulate(df2, tablefmt="pipe", headers="keys")
+        with open(output[0], 'w') as target:
+            target.write(outstr)
+
+rule generate_report_md:
+    input:
+        configfile="config.yaml",
+        mdsummary="05-reports/metadata_summary.md",
+        fastq="01-imported/fastq_pe_count_describe.md",
+        run="01-imported/fastq_illumina_run.log",
+        amplicontype="02-denoised/{method}/representative_sequences_amplicon_type.txt",
+        repseqs="02-denoised/{method}/representative_sequences_lengths_describe.md",
+        md5status="02-denoised/{method}/representative_sequences_md5_status.txt",
+        alignment="03-repseqs/{method}/aligned_dna_sequences_gaps_describe.md",
+        samples="02-denoised/{method}/table_summary_samples.txt",
+        features="02-denoised/{method}/table_summary_features.txt",
+        visrepseqs="02-denoised/{method}/representative_sequences.qzv",
+        vistaxonomy="03-repseqs/{method}/taxonomy.qzv",
+        vistable="02-denoised/{method}/table.qzv",
+        vistaxbar="04-diversity/{method}/taxa_barplot.qzv",
+        visalpharare="04-diversity/{method}/alpha_rarefaction.qzv",
+        visevengs="04-diversity/{method}/evenness_group_significance.qzv",
+        visfaithgs="04-diversity/{method}/faith_pd_group_significance.qzv",
+        visobsotusgs="04-diversity/{method}/observed_otus_group_significance.qzv",
+        visshannongs="04-diversity/{method}/shannon_group_significance.qzv",
+        visbcemp="04-diversity/{method}/bray_curtis_emperor.qzv",
+        visjacemp="04-diversity/{method}/jaccard_emperor.qzv",
+        viswuemp="04-diversity/{method}/weighted_unifrac_emperor.qzv",
+        visuwuemp="04-diversity/{method}/unweighted_unifrac_emperor.qzv",
+        visuwugs="04-diversity/{method}/unweighted_unifrac_group_significance.qzv"
+    output:
+        "05-reports/report_{method}.md"
+    shell:
+        "echo '# Tourmaline Report' > {output};"
+        "echo '' >> {output};"
+        "echo 'For information on Tourmaline outputs, visit [https://github.com/aomlomics/tourmaline](https://github.com/aomlomics/tourmaline).' >> {output};"
+        "echo '' >> {output};"
+        "echo 'To view the QIIME 2 visualization (.qzv) files, click to download, then drag and drop in [https://view.qiime2.org](https://view.qiime2.org).' >> {output};"
+        "echo '' >> {output};"
+        "echo '---' >> {output};"
+        "echo '' >> {output};"
+        "echo '## Metadata Summary' >> {output};"
+        "echo '' >> {output};"
+        "echo Filename: {input.mdsummary} >> {output};"
+        "echo '' >> {output};"
+        "echo 'The first 10 columns are recommended by the Tourmaline developers but may not have been provided.' >> {output};"
+        "echo '' >> {output};"
+        "cat {input.mdsummary} >> {output};"
+        "echo '' >> {output};"
+        "echo '' >> {output};"
+        "echo '---' >> {output};"
+        "echo '' >> {output};"
+        "echo '## Fastq Sequences Information' >> {output};"
+        "echo '' >> {output};"
+        "echo '### Fastq sequences per sample' >> {output};"
+        "echo '' >> {output};"
+        "echo Filename: {input.fastq} >> {output};"
+        "echo '' >> {output};"
+        "cat {input.fastq} >> {output};"
+        "echo '' >> {output};"
+        "echo '### Number of Illumina runs' >> {output};"
+        "echo '' >> {output};"
+        "echo Filename: {input.run} >> {output};"
+        "echo '' >> {output};"
+        "echo '```' >> {output};"
+        "head -n 5 {input.run} >> {output};"
+        "echo '```' >> {output};"
+        "echo '' >> {output};"
+        "echo '---' >> {output};"
+        "echo '' >> {output};"
+        "echo '## Representative Sequences Information' >> {output};"
+        "echo '' >> {output};"
+        "echo '### Amplicon type' >> {output};"
+        "echo '' >> {output};"
+        "echo Filename: {input.amplicontype} >> {output};"
+        "echo '' >> {output};"
+        "echo '```' >> {output};"
+        "head -n 5 {input.amplicontype} >> {output};"
+        "echo '```' >> {output};"
+        "echo '' >> {output};"
+        "echo '### Sequence length' >> {output};"
+        "echo '' >> {output};"
+        "echo Filename: {input.repseqs} >> {output};"
+        "echo '' >> {output};"
+        "cat {input.repseqs} >> {output};"
+        "echo '' >> {output};"
+        "echo '### MD5 checksums' >> {output};"
+        "echo '' >> {output};"
+        "echo Filename: {input.md5status} >> {output};"
+        "echo '' >> {output};"
+        "echo '```' >> {output};"
+        "head -n 13 {input.md5status} >> {output};"
+        "echo '```' >> {output};"
+        "echo '' >> {output};"
+        "echo '### Alignment gaps per sequence' >> {output};"
+        "echo '' >> {output};"
+        "echo Filename: {input.alignment} >> {output};"
+        "echo '' >> {output};"
+        "cat {input.alignment} >> {output};"
+        "echo '' >> {output};"
+        "echo '### Visualization of representative sequences' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.visrepseqs}]\(../{input.visrepseqs}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '### Visualization of taxonomy' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.vistaxonomy}]\(../{input.vistaxonomy}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '---' >> {output};"
+        "echo '' >> {output};"
+        "echo '## Observation Table Information' >> {output};"
+        "echo '' >> {output};"
+        "echo '### Table summary: Samples' >> {output};"
+        "echo '' >> {output};"
+        "echo Filename: {input.samples} >> {output};"
+        "echo '' >> {output};"
+        "echo '```' >> {output};"
+        "head -n 13 {input.samples} >> {output};"
+        "echo '```' >> {output};"
+        "echo '' >> {output};"
+        "echo '### Table summary: Features' >> {output};"
+        "echo '' >> {output};"
+        "echo Filename: {input.features} >> {output};"
+        "echo '' >> {output};"
+        "echo '```' >> {output};"
+        "head -n 13 {input.features} >> {output};"
+        "echo '```' >> {output};"
+        "echo '' >> {output};"
+        "echo '### Table summary: QIIME 2 visualization' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.vistable}]\(../{input.vistable}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '---' >> {output};"
+        "echo '' >> {output};"
+        "echo '## Taxonomic Diversity Results' >> {output};"
+        "echo '' >> {output};"
+        "echo '### Taxonomy barplot' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.vistaxbar}]\(../{input.vistaxbar}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '---' >> {output};"
+        "echo '' >> {output};"
+        "echo '## Alpha Diversity Results' >> {output};"
+        "echo '' >> {output};"
+        "echo '### Alpha rarefaction' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.visalpharare}]\(../{input.visalpharare}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '### Evenness group significance' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.visevengs}]\(../{input.visevengs}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '### Faith PD group significance' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.visfaithgs}]\(../{input.visfaithgs}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '### Observed OTUs/ASVs group significance' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.visobsotusgs}]\(../{input.visobsotusgs}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '### Shannon group significance' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.visshannongs}]\(../{input.visshannongs}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '---' >> {output};"
+        "echo '' >> {output};"
+        "echo '## Beta Diversity Results' >> {output};"
+        "echo '' >> {output};"
+        "echo '### Bray-Curtis PCoA' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.visbcemp}]\(../{input.visbcemp}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '### Jaccard PCoA' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.visjacemp}]\(../{input.visjacemp}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '### Weighted UniFrac PCoA' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.viswuemp}]\(../{input.viswuemp}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '### Unweighted UniFrac PCoA' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.visuwuemp}]\(../{input.visuwuemp}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '### Unweighted UniFrac Group Significance' >> {output};"
+        "echo '' >> {output};"
+        "echo Download file: [{input.visuwugs}]\(../{input.visuwugs}\) >> {output};"
+        "echo '' >> {output};"
+        "echo '---' >> {output};"
+        "echo '' >> {output};"
+        "echo '## Tourmaline Config File' >> {output};"
+        "echo '' >> {output};"
+        "echo Filename: {input.configfile} >> {output};"
+        "echo '' >> {output};"
+        "echo '```' >> {output};"
+        "cat {input.configfile} >> {output};"
+        "echo '```' >> {output};"
+
+rule generate_report_html:
+    input:
+        markdown="05-reports/report_{method}.md"
+    params:
+        theme=config["report_theme"]
+    output:
+        "05-reports/report_{method}.html"
+    shell:
+        "pandoc -i {input} -o {output};"
+        "echo '<!DOCTYPE html>' > header.html;"
+        "echo '<html>' >> header.html;"
+        "echo '<head>' >> header.html;"
+        "echo '<link rel=\"stylesheet\" type=\"text/css\" href=\"../css/{params.theme}.css\">' >> header.html;"
+        "echo '</head>' >> header.html;"
+        "echo '<body>' >> header.html;"
+        "echo '' >> header.html;"
+        "cat header.html {output} > temp.html;"
+        "echo '' >> temp.html;"
+        "echo '</body>' >> temp.html;"
+        "echo '</html>' >> temp.html;"
+        "mv temp.html {output};"
+        "/bin/rm header.html"
+
+
+
