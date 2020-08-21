@@ -1,75 +1,116 @@
-sample-id	Treatment	Day	Sex	Diet	Room	Pen	Run	Rep	Study
-AI-CP-d1	CP	Day1							AI
-AI-CP-d10	CP	Day10							AI
-AI-CP-d2	CP	Day2							AI
-AI-CP-d3	CP	Day3							AI
-AI-CP-d4	CP	Day4							AI
-AI-CP-d6	CP	Day6							AI
-AI-CP-d8	CP	Day8							AI
-AI-d0	Control	Day0							AI
-AI-d1	Control	Day1							AI
-AI-d10	Control	Day10							AI
-AI-d2	Control	Day2							AI
-AI-d3	Control	Day3							AI
-AI-d4	Control	Day4							AI
-AI-d6	Control	Day6							AI
-AI-d8	Control	Day8							AI
-AI-NSP-d0	NSP	Day0							AI
-AI-NSP-d1	NSP	Day1							AI
-AI-NSP-d2	NSP	Day2							AI
-AI-NSP-d3	NSP	Day3							AI
-AI-NSP-d4	NSP	Day4							AI
-AI-NSP-d6	NSP	Day6							AI
-AI-NSP-d8	NSP	Day8							AI
-CM-1			F	Control	Room3	A	Run1	Rep2	Chicken
-CM-10			F	Control	Room4	A	Run1	Rep3	Chicken
-CM-11			F	Control	Room2	A	Run1	Rep1	Chicken
-CM-12			F	Canola	Room9	A	Run1	Rep3	Chicken
-CM-13			F	Canola	Room8	A	Run1	Rep2	Chicken
-CM-14			F	Control	Room3	A	Run1	Rep2	Chicken
-CM-16			M	Canola	Room9	A	Run1	Rep3	Chicken
-CM-17			M	Control	Room4	A	Run1	Rep3	Chicken
-CM-18			M	Control	Room4	A	Run1	Rep3	Chicken
-CM-19			M	Canola	Room7	A	Run1	Rep1	Chicken
-CM-2			F	Canola	Room7	A	Run1	Rep1	Chicken
-CM-20			M	Canola	Room7	A	Run1	Rep1	Chicken
-CM-21			M	Control	Room2	A	Run1	Rep1	Chicken
-CM-22			F	Canola	Room7	A	Run1	Rep1	Chicken
-CM-23			F	Canola	Room8	A	Run1	Rep2	Chicken
-CM-24			M	Canola	Room7	A	Run1	Rep1	Chicken
-CM-26			F	Control	Room4	A	Run1	Rep1	Chicken
-CM-27			F	Control	Room2	A	Run1	Rep1	Chicken
-CM-28			M	Control	Room2	A	Run1	Rep1	Chicken
-CM-29			M	Canola	Room8	A	Run1	Rep2	Chicken
-CM-3			F	Canola	Room9	A	Run1	Rep3	Chicken
-CM-30			M	Canola	Room9	A	Run1	Rep3	Chicken
-CM-31			M	Canola	Room7	B	Run2	Rep4	Chicken
-CM-33			M	Canola	Room8	B	Run2	Rep5	Chicken
-CM-34			M	Control	Room4	B	Run2	Rep6	Chicken
-CM-35			F	Canola	Room9	B	Run2	Rep6	Chicken
-CM-37			M	Canola	Room7	B	Run2	Rep4	Chicken
-CM-38			M	Control	Room3	C	Run2	Rep5	Chicken
-CM-39			M	Canola	Room9	B	Run2	Rep6	Chicken
-CM-4			F	Canola	Room9	A	Run1	Rep3	Chicken
-CM-41			M	Canola	Room7	B	Run2	Rep4	Chicken
-CM-42			F	Control	Room3	C	Run2	Rep5	Chicken
-CM-43			F	Canola	Room8	B	Run2	Rep5	Chicken
-CM-44			M	Control	Room3	B	Run2	Rep4	Chicken
-CM-45			M	Canola	Room7	B	Run2	Rep4	Chicken
-CM-46			M	Control	Room3	B	Run2	Rep4	Chicken
-CM-47			M	Canola	Room8	B	Run2	Rep5	Chicken
-CM-49			F	Canola	Room8	B	Run2	Rep5	Chicken
-CM-5			F	Control	Room4	A	Run1	Rep3	Chicken
-CM-50			M	Control	Room4	B	Run2	Rep6	Chicken
-CM-51			F	Canola	Room9	B	Run2	Rep6	Chicken
-CM-52			F	Control	Room4	B	Run2	Rep6	Chicken
-CM-53			F	Canola	Room8	B	Run2	Rep5	Chicken
-CM-55			F	Canola	Room9	B	Run2	Rep6	Chicken
-CM-57			F	Canola	Room7	B	Run2	Rep4	Chicken
-CM-58			F	Control	Room3	C	Run2	Rep5	Chicken
-CM-6			M	Control	Room2	A	Run1	Rep1	Chicken
-CM-60			F	Control	Room3	B	Run2	Rep4	Chicken
-CM-7			F	Control	Room3	A	Run1	Rep2	Chicken
-CM-8			F	Control	Room3	A	Run1	Rep2	Chicken
-CM-9			M	Control	Room3	A	Run1	Rep2	Chicken
-Control									
+#SampleID	Pig	Trial	SampleType	Tissue	treatment
+Lcec7A	7A	A	lum	cecum	sal 
+Lcec7B	7B	B	lum	cecum	sal 
+Lcec8A	8A	A	lum	cecum	sal 
+Lcec8B	8B	B	lum	cecum	sal 
+Lcec9A	9A	A	lum	cecum	sal-tyl
+Lcec9B	9B	B	lum	cecum	sal-tyl
+Lcec10A	10A	A	lum	cecum	sal-tyl
+Lcec10B	10B	B	lum	cecum	sal-tyl
+Lcec11A	11A	A	lum	cecum	sal-chlortet
+Lcec11B	11B	B	lum	cecum	sal-chlortet
+Lcec12A	12A	A	lum	cecum	sal-chlortet
+Lcec12B	12B	B	lum	cecum	sal-chlortet
+Ldc7A	7A	A	lum	desc colon	sal 
+Ldc7B	7B	B	lum	desc colon	sal 
+Ldc8A	8A	A	lum	desc colon	sal 
+Ldc9A	9A	A	lum	desc colon	sal-tyl
+Ldc9B	9B	B	lum	desc colon	sal-tyl
+Ldc10A	10A	A	lum	desc colon	sal-tyl
+Ldc10B	10B	B	lum	desc colon	sal-tyl
+Ldc11A	11A	A	lum	desc colon	sal-chlortet
+Ldc11B	11B	B	lum	desc colon	sal-chlortet
+Ldc12A	12A	A	lum	desc colon	sal-chlortet
+Ldc12B	12B	B	lum	desc colon	sal-chlortet
+Mcec7A	7A	A	muc	cecum	sal 
+Mcec7B	7B	B	muc	cecum	sal 
+Mcec8A	8A	A	muc	cecum	sal 
+Mcec8B	8B	B	muc	cecum	sal 
+Mcec9A	9A	A	muc	cecum	sal-tyl
+Mcec9B	9B	B	muc	cecum	sal-tyl
+Mcec10A	10A	A	muc	cecum	sal-tyl
+Mcec10B	10B	B	muc	cecum	sal-tyl
+Mcec11A	11A	A	muc	cecum	sal-chlortet
+Mcec11B	11B	B	muc	cecum	sal-chlortet
+Mcec12B	12B	B	muc	cecum	sal-chlortet
+Mdc7A	7A	A	muc	desc colon	sal 
+Mdc7B	7B	B	muc	desc colon	sal 
+Mdc8A	8A	A	muc	desc colon	sal 
+Mdc8B	8B	B	muc	desc colon	sal 
+Mdc9A	9A	A	muc	desc colon	sal-tyl
+Mdc9B	9B	B	muc	desc colon	sal-tyl
+Mdc10A	10A	A	muc	desc colon	sal-tyl
+Mdc11A	11A	A	muc	desc colon	sal-chlortet
+Mdc11B	11B	B	muc	desc colon	sal-chlortet
+Mdc12A	12A	A	muc	desc colon	sal-chlortet
+Mdc12B	12B	B	muc	desc colon	sal-chlortet
+Mile7A	7A	A	muc	ileum	sal 
+Mile7B	7B	B	muc	ileum	sal 
+Mile8A	8A	A	muc	ileum	sal 
+Mile8B	8B	B	muc	ileum	sal 
+Mile9A	9A	A	muc	ileum	sal-tyl
+Mile9B	9B	B	muc	ileum	sal-tyl
+Mile10A	10A	A	muc	ileum	sal-tyl
+Mile10B	10B	B	muc	ileum	sal-tyl
+Mile11A	11A	A	muc	ileum	sal-chlortet
+Mile12A	12A	A	muc	ileum	sal-chlortet
+Mile12B	12B	B	muc	ileum	sal-chlortet
+LcecA1	1A	A	lum	cecum	control
+LcecA2	2A	A	lum	cecum	control
+LcecA3	3A	A	lum	cecum	tylosin
+LcecA4	4A	A	lum	cecum	tylosin
+LcecA5	5A	A	lum	cecum	chlortet
+LcecA6	6A	A	lum	cecum	chlortet
+LcecB1	1B	B	lum	cecum	control
+LcecB2	2B	B	lum	cecum	control
+LcecB3	3B	B	lum	cecum	tylosin
+LcecB4	4B	B	lum	cecum	tylosin
+LcecB5	5B	B	lum	cecum	chlortet
+LcecB6	6B	B	lum	cecum	chlortet
+LdcA2	2A	A	lum	desc colon	control
+LdcA3	3A	A	lum	desc colon	tylosin
+LdcA4	4A	A	lum	desc colon	tylosin
+LdcA5	5A	A	lum	desc colon	chlortet
+LdcA6	6A	A	lum	desc colon	chlortet
+LdcB1	1B	B	lum	desc colon	control
+LdcB2	2B	B	lum	desc colon	control
+LdcB3	3B	B	lum	desc colon	tylosin
+LdcB4	4B	B	lum	desc colon	tylosin
+LdcB5	5B	B	lum	desc colon	chlortet
+LdcB6	6B	B	lum	desc colon	chlortet
+McecA1	1A	A	muc	cecum	control
+McecA2	2A	A	muc	cecum	control
+McecA3	3A	A	muc	cecum	tylosin
+McecA4	4A	A	muc	cecum	tylosin
+McecA5	5A	A	muc	cecum	chlortet
+McecA6	6A	A	muc	cecum	chlortet
+McecB1	1B	B	muc	cecum	control
+McecB2	2B	B	muc	cecum	control
+McecB3	3B	B	muc	cecum	tylosin
+McecB4	4B	B	muc	cecum	tylosin
+McecB5	5B	B	muc	cecum	chlortet
+McecB6	6B	B	muc	cecum	chlortet
+MdcA1	1A	A	muc	desc colon	control
+MdcA2	2A	A	muc	desc colon	control
+MdcA3	3A	A	muc	desc colon	tylosin
+MdcA4	4A	A	muc	desc colon	tylosin
+MdcA5	5A	A	muc	desc colon	chlortet
+MdcA6	6A	A	muc	desc colon	chlortet
+MdcB1	1B	B	muc	desc colon	control
+MdcB2	2B	B	muc	desc colon	control
+MdcB3	3B	B	muc	desc colon	tylosin
+MdcB4	4B	B	muc	desc colon	tylosin
+MdcB5	5B	B	muc	desc colon	chlortet
+MdcB6	6B	B	muc	desc colon	chlortet
+MileA1	1A	A	muc	ileum	control
+MileA2	2A	A	muc	ileum	control
+MileA3	3A	A	muc	ileum	tylosin
+MileA4	4A	A	muc	ileum	tylosin
+MileA5	5A	A	muc	ileum	chlortet
+MileA6	6A	A	muc	ileum	chlortet
+MileB1	1B	B	muc	ileum	control
+MileB2	2B	B	muc	ileum	control
+MileB3	3B	B	muc	ileum	tylosin
+MileB4	4B	B	muc	ileum	tylosin
+MileB5	5B	B	muc	ileum	chlortet
+MileB6	6B	B	muc	ileum	chlortet

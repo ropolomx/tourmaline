@@ -1,0 +1,55 @@
+#SampleID	Pig	Trial	SampleType	Tissue	treatment
+Lcec7A	7A	A	lum	cecum	sal 
+Lcec7B	7B	B	lum	cecum	sal 
+Lcec8A	8A	A	lum	cecum	sal 
+Lcec9A	9A	A	lum	cecum	sal-tyl
+Lcec9B	9B	B	lum	cecum	sal-tyl
+Lcec10A	10A	A	lum	cecum	sal-tyl
+Lcec10B	10B	B	lum	cecum	sal-tyl
+Lcec11A	11A	A	lum	cecum	sal-chlortet
+Lcec11B	11B	B	lum	cecum	sal-chlortet
+Lcec12A	12A	A	lum	cecum	sal-chlortet
+Lcec12B	12B	B	lum	cecum	sal-chlortet
+Ldc7A	7A	A	lum	desc colon	sal 
+Ldc7B	7B	B	lum	desc colon	sal 
+Ldc8A	8A	A	lum	desc colon	sal 
+Ldc9A	9A	A	lum	desc colon	sal-tyl
+Ldc9B	9B	B	lum	desc colon	sal-tyl
+Ldc10A	10A	A	lum	desc colon	sal-tyl
+Ldc10B	10B	B	lum	desc colon	sal-tyl
+Ldc11A	11A	A	lum	desc colon	sal-chlortet
+Ldc11B	11B	B	lum	desc colon	sal-chlortet
+Ldc12A	12A	A	lum	desc colon	sal-chlortet
+Ldc12B	12B	B	lum	desc colon	sal-chlortet
+Mcec7A	7A	A	muc	cecum	sal 
+Mcec7B	7B	B	muc	cecum	sal 
+Mcec8A	8A	A	muc	cecum	sal 
+Mcec8B	8B	B	muc	cecum	sal 
+Mcec9A	9A	A	muc	cecum	sal-tyl
+Mcec9B	9B	B	muc	cecum	sal-tyl
+Mcec10A	10A	A	muc	cecum	sal-tyl
+Mcec10B	10B	B	muc	cecum	sal-tyl
+Mcec11A	11A	A	muc	cecum	sal-chlortet
+Mcec12B	12B	B	muc	cecum	sal-chlortet
+Mdc7A	7A	A	muc	desc colon	sal 
+Mdc7B	7B	B	muc	desc colon	sal 
+Mdc8A	8A	A	muc	desc colon	sal 
+Mdc8B	8B	B	muc	desc colon	sal 
+Mdc9A	9A	A	muc	desc colon	sal-tyl
+Mdc9B	9B	B	muc	desc colon	sal-tyl
+Mdc10A	10A	A	muc	desc colon	sal-tyl
+Mdc11A	11A	A	muc	desc colon	sal-chlortet
+Mdc11B	11B	B	muc	desc colon	sal-chlortet
+Mdc12A	12A	A	muc	desc colon	sal-chlortet
+Mdc12B	12B	B	muc	desc colon	sal-chlortet
+Mile7A	7A	A	muc	ileum	sal 
+Mile7B	7B	B	muc	ileum	sal 
+Mile8A	8A	A	muc	ileum	sal 
+Mile8B	8B	B	muc	ileum	sal 
+Mile9A	9A	A	muc	ileum	sal-tyl
+Mile9B	9B	B	muc	ileum	sal-tyl
+Mil 10A	10A	A	muc	ileum	sal-tyl
+Mil 10B	10B	B	muc	ileum	sal-tyl
+Mil 11A	11A	A	muc	ileum	sal-chlortet
+Mil 12A	12A	A	muc	ileum	sal-chlortet
+Mil 12B	12B	B	muc	ileum	sal-chlortet

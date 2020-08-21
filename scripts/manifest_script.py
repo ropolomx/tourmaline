@@ -58,29 +58,32 @@ def create_list_from_files(dir_name):
             if re.search(r"(?<=FLD\d{4}).\w*.fastq.gz$", _x) is not None:
                 sample_name = re.search(r"(?<=FLD\d{4}).\w*.fastq.gz$", _x).group()
                 sample_name = sample_name.replace('.', '')
-                sample_name = sample_name.replace('fastqgz', '')
+                sample_name = sample_name.replace('fastpfastqgz', '')
                 sample_name = sample_name.replace('_R1', '')
                 sample_name = sample_name.replace('_R2', '')
                 sample_name = sample_name.replace('_', '-')
-                abs_path = os.path.join(root, _x)
+                cwd = os.getcwd()
+                abs_path = cwd + '/' + os.path.join(root, _x)
                 direction = re.search(r"R\d", _x)
                 if direction.group() == "R1":
                     temp = "forward"
                 else:
                     temp = "reverse"
                 csv_list.append([sample_name, abs_path, temp])
+            elif re.search(r'.*?_S\d*_L001_R\d', _x) is not None:
+                sample_name = re.search(r'.*?_S', _x).group()
+                sample_name = sample_name.replace('_S','')
+                sample_name = sample_name.replace('_', '-')
+                cwd = os.getcwd()
+                abs_path = cwd + '/' + os.path.join(root, _x)
+                direction = re.search(r'R\d', _x)
+                if direction.group() == "R1":
+                    temp = "forward"                    
+                else:
+                    temp = "reverse"
+                csv_list.append([sample_name, abs_path, temp])
             else:
-                if re.search(r'.*?_S\d*_L001_R\d', _x) is not None:
-                    sample_name = re.search(r'.*?_S', _x).group()
-                    sample_name = sample_name.replace('_S','')
-                    sample_name = sample_name.replace('_', '-')
-                    abs_path = os.path.join(root, _x)
-                    direction = re.search(r'R\d', _x)
-                    if direction.group() == "R1":
-                        temp = "forward"
-                    else:
-                        temp = "reverse"
-                    csv_list.append([sample_name, abs_path, temp])
+                print('no record created for: ', _x)
     csv_list.sort(key = lambda x: x[0])
     return csv_list
 
