@@ -114,6 +114,7 @@ rule run_fastqc:
     output:
         "~00-quality-control/fastqc-report/multiqc_report.html"
     threads: 4
+    priority: 2
     conda:
         "envs/fastp.yaml"
     shell:
@@ -126,6 +127,7 @@ rule run_fastp:
     output:
         "~00-quality-control/fastp-report/multiqc_report.html"
     threads: 4
+    priority: 3
     conda:
         "envs/fastp.yaml"
     shell:
@@ -137,6 +139,7 @@ rule run_fastp:
 rule generate_manifest_pe_file:
     output:
         config["manifest_pe"]
+    priority: 1
     shell:
         "python3 $PWD/scripts/manifest_script.py $PWD/00-data; "
 
