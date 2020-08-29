@@ -109,7 +109,7 @@ rule dada2_pe_report:
 
 # RULES -----------------------------------------------------------------------
 
-# custom rule to run fastqc on ~00-raw-data
+### custom rule to run fastqc on ~00-raw-data
 rule run_fastqc:
     output:
         "~00-quality-control/fastqc-report/multiqc_report.html"
@@ -122,7 +122,7 @@ rule run_fastqc:
         "multiqc -o ~00-quality-control/fastqc-report/ ~00-quality-control/fastqc-files/*; "
 
 
-# custom rule to run fastp on ~00-raw-data
+### custom rule to run fastp on ~00-raw-data
 rule run_fastp:
     output:
         "~00-quality-control/fastp-report/multiqc_report.html"
@@ -135,7 +135,7 @@ rule run_fastp:
         "multiqc -o ~00-quality-control/fastp-report ~00-quality-control/fastp-files/*; "
         "cp ~00-raw-data/metadata.tsv 00-data; "
 
-# custom rule to generate a manifest file from the filenames in data-00
+### custom rule to generate a manifest file from the filenames in data-00
 rule generate_manifest_pe_file:
     output:
         config["manifest_pe"]
@@ -756,6 +756,61 @@ rule diversity_beta_group_significance:
         "--m-metadata-column {params.column} "
         "--o-visualization {output} "
         "--p-pairwise"
+
+
+### custom rule to include permanova commands
+rule diversity_additional_metrics:
+    input:
+        "04-diversity/dada2-pe/bray_curtis_distance_matrix.qza", 
+        "04-diversity/dada2-pe/jaccard_distance_matrix.qza",
+        "04-diversity/dada2-pe/unweighted_unifrac_distance_matrix.qza",
+        "04-diversity/dada2-pe/weighted_unifrac_distance_matrix.qza",
+        "02-denoised/dada2-pe/table.qza"
+    output:
+        "04-diversity/dada2-pe/bray-curtis-permanova.qzv",
+        "04-diversity/dada2-pe/jaccard-permanova.qzv",
+        "04-diversity/dada2-pe/unweighted-unifrac-permanova.qzv",
+        "04-diversity/dada2-pe/weighted-unifrac-permanova.qzv",
+        "04-diversity/dada2-pe/pielous_evenness_vector.qza"
+    shell:
+        "qiime diversity beta-group-significance "
+        "--i-distance-matrix 04-diversity/dada2-pe/bray_curtis_distance_matrix.qza "
+        "--m-metadata-file 00-data/metadata.tsv "
+        "--m-metadata-column treatment "
+        "--p-method permanova "
+        "--p-pairwise "
+        "--p-permutations 999 "
+        "--o-visualization 04-diversity/dada2-pe/bray-curtis-permanova.qzv "
+        "qiime diversity beta-group-significance "
+        "--i-distance-matrix 04-diversity/dada2-pe/jaccard_distance_matrix.qza "
+        "--m-metadata-file 00-data/metadata.tsv "
+        "--m-metadata-column treatment "
+        "--p-method permanova "
+        "--p-pairwise "
+        "--p-permutations 999 "
+        "--o-visualization 04-diversity/dada2-pe/jaccard-permanova.qzv "
+        "qiime diversity beta-group-significance "
+        "--i-distance-matrix 04-diversity/dada2-pe/unweighted_unifrac_distance_matrix.qza "
+        "--m-metadata-file 00-data/metadata.tsv "
+        "--m-metadata-column treatment "
+        "--p-method permanova "
+        "--p-pairwise "
+        "--p-permutations 999 "
+        "--o-visualization 04-diversity/dada2-pe/unweighted-unifrac-permanova.qzv "
+        "qiime diversity beta-group-significance "
+        "--i-distance-matrix 04-diversity/dada2-pe/weighted_unifrac_distance_matrix.qza "
+        "--m-metadata-file 00-data/metadata.tsv "
+        "--m-metadata-column treatment "
+        "--p-method permanova "
+        "--p-pairwise "
+        "--p-permutations 999 "
+        "--o-visualization 04-diversity/dada2-pe/weighted-unifrac-permanova.qzv "
+        "qiime diversity-lib pielou-evenness "
+        "--i-table 02-denoised/dada2-pe/table.qza "
+        "--p-drop-undefined-samples "
+        "--o-vector 04-diversity/dada2-pe/pielous_evenness_vector.qza"
+'''
+
 
 rule summarize_metadata:
     input:

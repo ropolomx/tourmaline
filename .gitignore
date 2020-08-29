@@ -4,4 +4,5 @@
 03-repseqs
 04-diversity
 workflow*
-.gitignore
+~00-quality-control/fastp-files
+~00-quality-control/fastqc-files

@@ -1,0 +1,36 @@
+﻿Guide to using tourmaline with (or without) added quality control processing
+User Guide
+* the workflow will be referenced as if in the /home/user/workflow/tourmaline directory (subbing user for your actual username)
+* the tourmaline folder is from a git repository and must be on the proper branch
+* open a terminal in the tourmaline folder
+   * right-click inside the file browser OR navigate by using ‘cd /home/user/workflow/tourmaline’
+   * you can also use ‘cd’ with no directory path to get to home/user, then ‘cd /workflow/tourmaline’
+* use “git branch” to verify that the starred branch is test_fastp
+* also make sure you are in the proper conda environment
+* at this time it is qiime2-2020.2
+   * use ‘conda activate qiime2-2020.2’ to do this
+* if you are in the proper conda environment and on the proper git branch (test_fastp) then you are ready to proceed
+* To use quality control steps
+   * put data files (fastq.gz) and metadata.tsv in the ~00-raw-data folder
+   * use the command ‘snakemake pe_quality_control’
+      * this will create files in the ~00-quality-control folder
+      * view the fastp and fastqc report.html files
+   * the parameters for 
+      * dada2pe_trunc_len_f: 
+      * dada2pe_trunc_len_r: 
+      * dada2pe_trim_left_f: 
+      * dada2pe_trim_left_r: 
+   * and
+      * core_sampling_depth: 
+      * alpha_max_depth: 
+   * need to be set in the config.yaml file
+   * then ‘snakemake dada2_pe_denoise’
+   * then ‘snakemake dada2_pe_diversity’
+   * and finally ‘snakemake dada2_pe_report’
+* Without the quality control steps
+   * put data files and metadata.tsv directly into 00-data
+   * run ‘python3 scripts/manafest_script.py 00-data’
+   * set the parameters in the config file
+   * then ‘snakemake dada2_pe_denoise’
+   * then ‘snakemake dada2_pe_diversity’
+   * and finally ‘snakemake dada2_pe_report’
