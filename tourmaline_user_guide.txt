@@ -26,6 +26,7 @@ User Guide
    * need to be set in the config.yaml file
    * then ‘snakemake dada2_pe_denoise’
    * then ‘snakemake dada2_pe_diversity’
+   * to run the permanova commands use ‘bash scripts/permanova_commands.sh’
    * and finally ‘snakemake dada2_pe_report’
 * Without the quality control steps
    * put data files and metadata.tsv directly into 00-data
@@ -33,4 +34,5 @@ User Guide
    * set the parameters in the config file
    * then ‘snakemake dada2_pe_denoise’
    * then ‘snakemake dada2_pe_diversity’
+   * to run the permanova commands use ‘bash scripts/permanova_commands.sh’
    * and finally ‘snakemake dada2_pe_report’
