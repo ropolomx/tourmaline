@@ -1,7 +1,75 @@
-#SampleID	project_name	experiment_design_description	target_gene	target_subfragment	pcr_primers	pcr_primer_names	platform	fwd_barcode	fwd_primer_seq	rev_barcode	rev_primer_seq	primer_combination	sample_number	sample_id	sample_idus	core	side	treatment
-samp.519	My Project	This is what my project is about	18S rRNA	V7	FWD:TGGTGCATGGCCGTTCTTAGT; REV:CATCTAAGGGCATCACAGACC	FWD:Euk1560F; REV:Euk2035R	Illumina	NNNNACTACGT	TGGTGCATGGCCGTTCTTAGT	NNNACATGCT	CATCTAAGGGCATCACAGACC	F14 R8	20	519	419	21	Side 1	Field Control
-samp.520	My Project	This is what my project is about	18S rRNA	V7	FWD:TGGTGCATGGCCGTTCTTAGT; REV:CATCTAAGGGCATCACAGACC	FWD:Euk1560F; REV:Euk2035R	Illumina	NNNNACTACGT	TGGTGCATGGCCGTTCTTAGT	NNNACGACAC	CATCTAAGGGCATCACAGACC	F14 R9	21	520	420	21	Middle	Field Control
-samp.521	My Project	This is what my project is about	18S rRNA	V7	FWD:TGGTGCATGGCCGTTCTTAGT; REV:CATCTAAGGGCATCACAGACC	FWD:Euk1560F; REV:Euk2035R	Illumina	NNNNACTACGT	TGGTGCATGGCCGTTCTTAGT	NNNACGAGCA	CATCTAAGGGCATCACAGACC	F14 R10	22	521	421	21	Side 2	Field Control
-samp.537	My Project	This is what my project is about	18S rRNA	V7	FWD:TGGTGCATGGCCGTTCTTAGT; REV:CATCTAAGGGCATCACAGACC	FWD:Euk1560F; REV:Euk2035R	Illumina	NNNNAGCTACA	TGGTGCATGGCCGTTCTTAGT	NNACACGAC	CATCTAAGGGCATCACAGACC	F28 R2	38	537	437	6	Side 1	Lab Control
-samp.538	My Project	This is what my project is about	18S rRNA	V7	FWD:TGGTGCATGGCCGTTCTTAGT; REV:CATCTAAGGGCATCACAGACC	FWD:Euk1560F; REV:Euk2035R	Illumina	NNNNAGCTACA	TGGTGCATGGCCGTTCTTAGT	NNACACTGT	CATCTAAGGGCATCACAGACC	F28 R3	39	538	438	6	Middle	Lab Control
-samp.539	My Project	This is what my project is about	18S rRNA	V7	FWD:TGGTGCATGGCCGTTCTTAGT; REV:CATCTAAGGGCATCACAGACC	FWD:Euk1560F; REV:Euk2035R	Illumina	NNNNAGCTACA	TGGTGCATGGCCGTTCTTAGT	NNACAGAGC	CATCTAAGGGCATCACAGACC	F28 R4	40	539	439	6	Side 2	Lab Control
+sample-id	Treatment	Day	Sex	Diet	Room	Pen	Run	Rep	Study
+AI-CP-d1	CP	Day1							AI
+AI-CP-d10	CP	Day10							AI
+AI-CP-d2	CP	Day2							AI
+AI-CP-d3	CP	Day3							AI
+AI-CP-d4	CP	Day4							AI
+AI-CP-d6	CP	Day6							AI
+AI-CP-d8	CP	Day8							AI
+AI-d0	Control	Day0							AI
+AI-d1	Control	Day1							AI
+AI-d10	Control	Day10							AI
+AI-d2	Control	Day2							AI
+AI-d3	Control	Day3							AI
+AI-d4	Control	Day4							AI
+AI-d6	Control	Day6							AI
+AI-d8	Control	Day8							AI
+AI-NSP-d0	NSP	Day0							AI
+AI-NSP-d1	NSP	Day1							AI
+AI-NSP-d2	NSP	Day2							AI
+AI-NSP-d3	NSP	Day3							AI
+AI-NSP-d4	NSP	Day4							AI
+AI-NSP-d6	NSP	Day6							AI
+AI-NSP-d8	NSP	Day8							AI
+CM-1			F	Control	Room3	A	Run1	Rep2	Chicken
+CM-10			F	Control	Room4	A	Run1	Rep3	Chicken
+CM-11			F	Control	Room2	A	Run1	Rep1	Chicken
+CM-12			F	Canola	Room9	A	Run1	Rep3	Chicken
+CM-13			F	Canola	Room8	A	Run1	Rep2	Chicken
+CM-14			F	Control	Room3	A	Run1	Rep2	Chicken
+CM-16			M	Canola	Room9	A	Run1	Rep3	Chicken
+CM-17			M	Control	Room4	A	Run1	Rep3	Chicken
+CM-18			M	Control	Room4	A	Run1	Rep3	Chicken
+CM-19			M	Canola	Room7	A	Run1	Rep1	Chicken
+CM-2			F	Canola	Room7	A	Run1	Rep1	Chicken
+CM-20			M	Canola	Room7	A	Run1	Rep1	Chicken
+CM-21			M	Control	Room2	A	Run1	Rep1	Chicken
+CM-22			F	Canola	Room7	A	Run1	Rep1	Chicken
+CM-23			F	Canola	Room8	A	Run1	Rep2	Chicken
+CM-24			M	Canola	Room7	A	Run1	Rep1	Chicken
+CM-26			F	Control	Room4	A	Run1	Rep1	Chicken
+CM-27			F	Control	Room2	A	Run1	Rep1	Chicken
+CM-28			M	Control	Room2	A	Run1	Rep1	Chicken
+CM-29			M	Canola	Room8	A	Run1	Rep2	Chicken
+CM-3			F	Canola	Room9	A	Run1	Rep3	Chicken
+CM-30			M	Canola	Room9	A	Run1	Rep3	Chicken
+CM-31			M	Canola	Room7	B	Run2	Rep4	Chicken
+CM-33			M	Canola	Room8	B	Run2	Rep5	Chicken
+CM-34			M	Control	Room4	B	Run2	Rep6	Chicken
+CM-35			F	Canola	Room9	B	Run2	Rep6	Chicken
+CM-37			M	Canola	Room7	B	Run2	Rep4	Chicken
+CM-38			M	Control	Room3	C	Run2	Rep5	Chicken
+CM-39			M	Canola	Room9	B	Run2	Rep6	Chicken
+CM-4			F	Canola	Room9	A	Run1	Rep3	Chicken
+CM-41			M	Canola	Room7	B	Run2	Rep4	Chicken
+CM-42			F	Control	Room3	C	Run2	Rep5	Chicken
+CM-43			F	Canola	Room8	B	Run2	Rep5	Chicken
+CM-44			M	Control	Room3	B	Run2	Rep4	Chicken
+CM-45			M	Canola	Room7	B	Run2	Rep4	Chicken
+CM-46			M	Control	Room3	B	Run2	Rep4	Chicken
+CM-47			M	Canola	Room8	B	Run2	Rep5	Chicken
+CM-49			F	Canola	Room8	B	Run2	Rep5	Chicken
+CM-5			F	Control	Room4	A	Run1	Rep3	Chicken
+CM-50			M	Control	Room4	B	Run2	Rep6	Chicken
+CM-51			F	Canola	Room9	B	Run2	Rep6	Chicken
+CM-52			F	Control	Room4	B	Run2	Rep6	Chicken
+CM-53			F	Canola	Room8	B	Run2	Rep5	Chicken
+CM-55			F	Canola	Room9	B	Run2	Rep6	Chicken
+CM-57			F	Canola	Room7	B	Run2	Rep4	Chicken
+CM-58			F	Control	Room3	C	Run2	Rep5	Chicken
+CM-6			M	Control	Room2	A	Run1	Rep1	Chicken
+CM-60			F	Control	Room3	B	Run2	Rep4	Chicken
+CM-7			F	Control	Room3	A	Run1	Rep2	Chicken
+CM-8			F	Control	Room3	A	Run1	Rep2	Chicken
+CM-9			M	Control	Room3	A	Run1	Rep2	Chicken
+Control									

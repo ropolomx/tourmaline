@@ -1,12 +1,8 @@
-<img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Tourmaline-121240.jpg" height=200> <img src="http://melissabessmonroe.com/wp-content/uploads/2014/03/20140303_TourmalineSurfPark128.jpg" height=200>
+<img src="tourmaline_banner.png" alt="tourmaline_banner" width="100%"/>
 
-<!--[![Build Status](https://travis-ci.org/cuttlefishh/tourmaline.svg?branch=master)](https://travis-ci.org/cuttlefishh/tourmaline)
+# Tourmaline
 
-See https://docs.travis-ci.com/user/getting-started/ and https://github.com/biocore/oecophylla/blob/master/.travis.yml for setting up Travis.-->
-
-# tourmaline
-
-Amplicon sequencing is a metagenetics method whereby a single DNA locus in a community of organisms is PCR-amplified and sequenced. Tourmaline is an amplicon sequence processing workflow for Illumina sequence data that uses [QIIME 2](https://qiime2.org) and the software packages it wraps. Tourmaline manages commands, inputs, and outputs using the [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow management system.
+Amplicon sequencing (metabarcoding) is a method whereby a single DNA locus in a community of organisms is PCR-amplified and sequenced. Tourmaline is an amplicon sequence processing workflow for Illumina sequence data that uses [QIIME 2](https://qiime2.org) and the software packages it wraps. Tourmaline manages commands, inputs, and outputs using the [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow management system.
 
 #### Amplicon sequence variants
 
@@ -17,20 +13,22 @@ Two methods of amplicon sequence processing are supported, both of which generat
 
 #### QIIME 2 and Snakemake commands
 
-QIIME 2 shell commands are provided for reference in [`commands.txt`](https://github.com/cuttlefishh/tourmaline/blob/master/commands.txt). Exact commands executed by the workflow are in [`Snakefile`](https://github.com/cuttlefishh/tourmaline/blob/master/Snakefile).
+QIIME 2 shell commands are provided for reference in [`commands.txt`](https://github.com/NOAA-AOML/tourmaline/blob/master/commands.txt). Exact commands executed by the workflow are in [`Snakefile`](https://github.com/NOAA-AOML/tourmaline/blob/master/Snakefile). With the help of Snakemake, Tourmaline provides rapid and reproducible workflows for processing amplicon sequence data, storing output files in a logical directory structure.
 
 #### Ready for MBON
 
-Tourmaline is an alternative amplicon 'pipeline' to [Banzai](https://github.com/jimmyodonnell/banzai), which was developed for [MBON](https://github.com/marinebon/MBON) (Marine Biodiversity Observation Network) and uses [Swarm](https://github.com/torognes/swarm) for OTU picking. Tourmaline provides rapid and reproducible workflows for [Deblur](https://github.com/biocore/deblur) and [DADA2](https://github.com/benjjneb/dada2) and is extensible to other OTU picking algorithms.
+Tourmaline is an alternative amplicon 'pipeline' to [Banzai](https://github.com/jimmyodonnell/banzai), which was developed for [MBON](https://github.com/marinebon/MBON) (Marine Biodiversity Observation Network). Banzai uses [Swarm](https://github.com/torognes/swarm) for OTU picking. Tourmaline supports both [Deblur](https://github.com/biocore/deblur) and [DADA2](https://github.com/benjjneb/dada2) for denoising to generate ASVs. In the future, Tourmaline could be extended to other OTU/ASV picking algorithms if they are added to QIIME 2.
 
 ## Installation
 
 Tourmaline requires the following software:
 
 * Conda
-* QIIME 2 version `2018.6` (should work with later versions but has not been tested)
+* QIIME 2 version 2020.2
 * Snakemake
-* Tournmaline (this repository)
+* Pandoc
+* Tabview
+* Tabulate
 
 ### Conda
 
@@ -38,54 +36,118 @@ First, if you don't have Conda installed on your machine, install [Miniconda](ht
 
 ### QIIME 2
 
-Second, install QIIME 2 in a Conda environment, if you haven't already. See the instructions at [qiime2.org](https://docs.qiime2.org/2018.6/install/native/). For example, on macOS these commands will install QIIME 2 inside a Conda environment called `qiime2-2018.6`:
+Second, install QIIME 2 in a Conda environment, if you haven't already. See the instructions at [qiime2.org](https://docs.qiime2.org/2020.2/install/native/). For example, on macOS these commands will install QIIME 2 inside a Conda environment called `qiime2-2020.2` (for Linux, change "osx" to "linux"):
 
 ```
-wget https://data.qiime2.org/distro/core/qiime2-2018.6-py35-osx-conda.yml
-conda env create -n qiime2-2018.6 --file qiime2-2018.6-py35-osx-conda.yml
+wget https://data.qiime2.org/distro/core/qiime2-2020.2-py36-osx-conda.yml
+conda env create -n qiime2-2020.2 --file qiime2-2020.2-py36-osx-conda.yml
 ```
 
-### Snakemake
+### Snakemake and other dependencies
 
-Third, activate your QIIME 2 environment and install Snakemake:
-
-```
-source activate qiime2-2018.6
-conda install snakemake
-```
-
-### Tourmaline
-
-Finally, clone the Tourmaline repository and rename it to the working directory for your project (replace the directories in ALL CAPS with your directories):
+Third, activate your QIIME 2 environment and install Snakemake, Pandoc, Tabview, and Tabulate:
 
 ```
-cd /PATH/TO
-git clone https://github.com/cuttlefishh/tourmaline.git
-mv tourmaline PROJECT
+conda activate qiime2-2020.2
+conda install -c bioconda snakemake pandoc tabview tabulate
 ```
 
-### Test Data
+Finally, you will install Tourmaline. "Installation" here is really just copying the files to your computer. You will do this in the next step by "cloning" the GitHub repository.
 
-The Tourmaline repository comes ready to go with test 18S rRNA fastq sequence data and a corresponding reference database.
+## Setup
 
-First you must edit the manifest files `00-data/manifest_se.csv` and `00-data/manifest_pe.csv` to point to the absolute filepaths of the sequences in your local copy of `tourmaline` (which you renamed to `PROJECT`). For example, if the filepath of your project is `/PATH/TO/PROJECT`, these commands will fix the manifest files:
+### Clone the Tourmaline repository
+
+Navigate to your project directory and clone the Tourmaline repository there. In the example below and following steps, replace "/PATH/TO/PROJECT" with the full path to your project directory (e.g., "$HOME/workshop"):
 
 ```
-cat manifest_pe.csv | sed 's|/Users/luke.thompson/git/tourmaline|/PATH/TO/PROJECT|' > temp
+cd $HOME/workshop
+git clone https://github.com/NOAA-AOML/tourmaline.git
+```
+
+It's a good idea to rename the `tourmaline` directory to something else before running the test data[^1].
+
+[^1]: In fact, it's always a good idea to rename the `tourmaline` directory after cloning it, because we'll want to clone a fresh copy of this directory whenever we want to preserve the previous output of a run, or run with different sample sets, parameters, or databases. To initialize a new `tourmaline` directory with the files and symlinks of an existing one, from the new `tourmaline` directory (renamed) run `scripts/scripts/copy_symlinks_from_existing_tourmaline_dir.sh /path/to/existing/tourmaline`.
+
+For example:
+
+```
+mv tourmaline tourmaline-test
+```
+
+Now change directories to `tourmaline-test`:
+
+```
+cd tourmaline-test
+```
+
+### Snakefile: Mac or Linux
+
+Tourmaline comes with support for both Mac and Linux operating systems. Due to some difference in the way similar commands work on the two systems (e.g., md5/md5sum, gzcat/zcat), two different Snakefiles are provided. Activate the Snakefile for your system by setting a symbolic link:
+
+```
+# if you have a mac system
+ln -s Snakefile_mac Snakefile
+# if you have a linux system
+ln -s Snakefile_linux Snakefile
+```
+
+You can see where your symbolic links point with the command `ls -l`. When you run Snakemake/Tourmaline, it will use whichever file `Snakefile` points to.
+
+### Run the test
+
+The Tourmaline repository comes ready to go with test 18S rRNA fastq sequence data and a corresponding reference database. 
+
+#### Edit the fastq manifest files
+
+To run the test data, you must edit the manifest files `00-data/manifest_se.csv` and `00-data/manifest_pe.csv` to point to the absolute filepaths of the sequences in your local copy of `tourmaline` (which you renamed to `tourmaline-test`). For example, if the filepath of your project is `$HOME/workshop`, these commands will fix the manifest files (change `$HOME` to the absolute path of your home directory):
+
+```
+cd /Users/myusername/workshop-2019.11/tourmaline-test/00-data
+cat manifest_pe.csv | sed 's|/PATH/TO/PROJECT/tourmaline|/Users/myusername/workshop-2019.11/tourmaline-test|' > temp
 mv temp manifest_pe.csv 
-cat manifest_se.csv | sed 's|/Users/luke.thompson/git/tourmaline|/PATH/TO/PROJECT|' > temp
+cat manifest_se.csv | sed 's|/PATH/TO/PROJECT/tourmaline|/Users/myusername/workshop-2019.11/tourmaline-test|' > temp
 mv temp manifest_se.csv
 ```
 
-You will also need to edit the configuration file `config.yaml` to reduce the Deblur trim length because the test sequences are only 120 bp, and decrease the subsampling values because the sequencing depth of the test dataset is very low:
+#### Edit the config File
+
+The configuration file `config.yaml` comes ready to run with the test data. However, please note that, because the sequencing depth of the test dataset is very low and the sequences are short (120 bp), *several of the parameters in the config file are not appropriate for a normal run of Tourmaline/QIIME 2.* Specifically, the following parameter settings in `config.yaml` should be changed when you run your own data:
 
 ```
-deblur_trim_length: 100
-alpha_max_depth: 50
-core_sampling_depth: 50
+deblur_trim_length: 100  # increase to minimum acceptable ASV length
+dada2se_trunc_len: 0     # change to point where quality drops below ~Q30
+dada2pe_trunc_len_f: 0   # change to point where quality drops below ~Q30
+dada2pe_trunc_len_r: 0   # change to point where quality drops below ~Q30
+core_sampling_depth: 50  # increase to desired rarefaction depth
+alpha_max_depth: 50      # increase to desired rarefaction depth
 ```
 
-Hint: Before you change `config.yaml`, make a copy called `config_default.yaml` that will stay unchanged. You can always run `diff config_default.yaml config.yaml` to see which parameters you have changed from the defaults.
+A second config file called `config_miseq.yaml` is included with parameters that might be appropriate for a 2x300bp MiSeq run. *Always tailor your parameters to your data empirically, using tools like [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) and [Figaro](https://github.com/Zymo-Research/figaro).* By default, Snakemake will use the parameters in the file called `config.yaml`, so make sure that file has the parameters you want to use.
+
+#### Run Snakemake
+
+Now you are ready to test Snakemake. You might start with the DADA2 paired-end workflow. From your directory `$HOME/workshop-2019.11/tourmaline-test`, run Snakemake with the Denoise rule as the target:
+
+```
+snakemake dada2_pe_denoise
+```
+
+If that works, try the next target rule in the DADA2 paired-end workflow, the Diversity rule:
+
+```
+snakemake dada2_pe_diversity
+```
+
+Finally, try the Report rule:
+
+```
+snakemake dada2_pe_report
+```
+
+If any of the above commands don't work, read the error messages carefully, try to figure out what went wrong, and attempt to fix the offending file (often the file paths in your fastq manifest need to be changed). Example output from the above commands is found in the directory `example-output`.
+
+You can also try DADA2 single-end. Deblur (command `snakemake deblur_se_denoise`) currently produces an error with the test data, but it should work with normal experimental data. 
 
 <!--
 BELOW DOES NOT FIX DEBLUR WITH TEST DATA -- STILL PRODUCES ERROR: IndexError:
@@ -94,15 +156,9 @@ deblur_min_reads: 1
 deblur_min_size: 1
 -->
 
-Now you are ready to test Snakemake. You might start with the DADA2 paired-end workflow:
+If you want to use `tourmaline-test` to analyze your own data after testing, make sure to delete the output directories (`01-imported`, `02-denoised`, `03-repseqs`, `04-diversity`, `05-reports`) generated in the testing process.
 
-```
-snakemake dada2_pe_denoise
-```
-
-You can try any of the DADA2 rules below. *Warning: The current test dataset does not work with Deblur.* Once you are ready to start analyzing your own data, make sure to delete the output directories (`01-imported`, `02-denoised`, `03-repseqs`, `04-diversity`, `05-reports`) generated in the testing process.
-
-### Helper Scripts
+### Helper scripts
 
 Tourmaline comes with the following helper scripts in the `scripts` directory:
 
@@ -128,15 +184,28 @@ Your metadata, also known as a mapping file, should be a tab-delimited text file
 
 Sample metadata should include basic sample information like `collection_timestamp`, `latitude`, and `longitude`, plus categories that describe treatment groups and environmental metadata relevant to your samples. It's important to have rich and complete sample metadata before you begin your analyses.
 
-Processing information should ideally include all of the following columns: `project_name`, `experiment_design_description`, `target_gene`, `target_subfragment`, `pcr_primers`, `pcr_primer_names`, `platform`, `instrument_model`, `run_center`, `run_date`. These will be included in your QC report.
+Processing information is also part of your metadata and includes information about how the samples were sequenced.
 
-The above columns follow the standards set by [Qiita](https://qiita.ucsd.edu/static/doc/html/gettingstartedguide/index.html). For additional help see [Metadata in QIIME 2](https://docs.qiime2.org/2018.6/tutorials/metadata/), the [EMP Metadata Guide](http://www.earthmicrobiome.org/protocols-and-standards/metadata-guide/), and [QIIMP](https://qiita.ucsd.edu/iframe/?iframe=qiimp) for help formatting your metadata.
+Your metadata should ideally include all of the following columns. These will be included in your QC report:
+
+* `project_name`
+* `experiment_design_description`
+* `target_gene`
+* `target_subfragment`
+* `pcr_primers`
+* `pcr_primer_names`
+* `platform`
+* `instrument_model`
+* `run_center`
+* `run_date`
+
+The above columns follow the standards set by [Qiita](https://qiita.ucsd.edu/static/doc/html/gettingstartedguide/index.html). For additional help see [Metadata in QIIME 2](https://docs.qiime2.org/2020.2/tutorials/metadata/), the [EMP Metadata Guide](http://www.earthmicrobiome.org/protocols-and-standards/metadata-guide/), [QIIMP](https://qiita.ucsd.edu/iframe/?iframe=qiimp), and NMDC's [Introduction to Metadata and Ontologies](https://microbiomedata.org/introduction-to-metadata-and-ontologies/) for help formatting your metadata.
 
 #### Format sequence data
 
-Tourmaline supports amplicon sequence data that is already demultiplexed (fastq manifest format). Using the sample names in your metadata file and the absolute filepaths to the forward and reverse demultiplexed sequence files (`.fastq.gz`) for each sample, create a fastq manifest file. See [Fastq Manifest Formats](https://docs.qiime2.org/2018.6/tutorials/importing/#fastq-manifest-formats) (QIIME 2) for instructions for creating this file. If your sequences are not already demultiplexed (e.g., they need to be imported as type `EMPPairedEndSequences`), you can use the commands `qiime tools import` and `qiime demux emp-paired` to demuliplex them, then unzip the archives and merge the manifest files, taking care to change the second column to `absolute-filepath` and ensure the sample IDs match those in your metadata file (the included script `match_manifest_to_metadata.py` can help with this).
+Tourmaline supports amplicon sequence data that is already demultiplexed (fastq manifest format). Using the sample names in your metadata file and the absolute filepaths to the forward and reverse demultiplexed sequence files (`.fastq.gz`) for each sample, create a fastq manifest file. See [Fastq Manifest Formats](https://docs.qiime2.org/2020.2/tutorials/importing/#fastq-manifest-formats) (QIIME 2) for instructions for creating this file. If your sequences are not already demultiplexed (e.g., they need to be imported as type `EMPPairedEndSequences`), you can use the commands `qiime tools import` and `qiime demux emp-paired` to demuliplex them, then unzip the archives and merge the manifest files, taking care to change the second column to `absolute-filepath` and ensure the sample IDs match those in your metadata file (the included script `match_manifest_to_metadata.py` can help with this).
 
-Note: While `qiime tools import` supports both `.fastq` and `.fastq.gz` formats, using `.fastq.gz` format is strongly recommended because it is ~5x faster and minimizes disk usage. (Hint: Gzipped files can still be viewed using `zcat` with `less` or `head`.)
+Note: While `qiime tools import` supports both `.fastq` and `.fastq.gz` formats, using `.fastq.gz` format is strongly recommended because it is $HOME5x faster and minimizes disk usage. (Hint: Gzipped files can still be viewed using `zcat` with `less` or `head`.)
 
 #### Set up data directory
 
@@ -147,14 +216,25 @@ PRJ=/PATH/TO/PROJECT
 DB=/PATH/TO/DATABASES
 ```
 
-Create a directory for data inside your working directory:
+Clone a new copy of the Tourmaline repository inside your working directory:
 
 ```
 cd $PRJ
-mkdir 00-data
+git clone https://github.com/NOAA-AOML/tourmaline.git
+cd tourmaline
 ```
 
-Move your metadata file and fastq manifest file(s) to `$PRJ/00-data`.
+#### Copy metadata and manifest files or create symbolic links to them
+
+Copy your metadata file and fastq manifest file(s) to `$PRJ/tourmaline/00-data` or create symbolic links to them. Use the code below to remove the test files and create links to your own metadata and fastq manifest files (the files in $PRJ/metadata can be named however you like):
+
+```
+cd $PRJ/tourmaline/00-data
+rm metadata.tsv manifest_se.csv manifest_pe.csv
+ln -s $PRJ/metadata/metadata.tsv metadata.tsv
+ln -s $PRJ/metadata/manifest_se.csv manifest_se.csv
+ln -s $PRJ/metadata/manifest_pe.csv manifest_pe.csv
+```
 
 #### Create symbolic links to reference sequence and taxonomy data
 
@@ -163,7 +243,8 @@ Reference sequences and taxonomy are used by QIIME 2 to assign taxonomy to the r
 Symbolic links to the QIIME 2-formatted reference sequence fasta and taxonomy files can go here (example locations of files shown):
 
 ```
-cd $PRJ/00-data
+cd $PRJ/tourmaline/00-data
+rm refseqs.fna reftax.tsv
 ln -s $DB/16s/16s_refseqs.fna refseqs.fna
 ln -s $DB/16s/16s_reftax.tsv reftax.tsv
 ```
@@ -171,8 +252,8 @@ ln -s $DB/16s/16s_reftax.tsv reftax.tsv
 The first time you run Tourmaline with a given amplicon locus, the files below will be created. However, for future projects with that same amplicon locus, you can put these files in your databases directory. You will have to make the directory `01-imported` before creating the symbolic links:
 
 ```
-mkdir $PRJ/01-imported
-cd $PRJ/01-imported
+mkdir $PRJ/tourmaline/01-imported
+cd $PRJ/tourmaline/01-imported
 ln -s $DB/16s/16s_refseqs.qza refseqs.qza
 ln -s $DB/16s/16s_reftax.qza reftax.qza
 ln -s $DB/16s/16s_refseqs_515f_806r.qza refseqs_extracted.qza
@@ -181,9 +262,9 @@ ln -s $DB/16s/16s_classifier.qza classifier.qza
 
 For Snakemake to work with these symbolic links, you may have to run `snakemake --cleanup-metadata <filenames>` on them first.
 
-#### Edit the configfile
+#### Edit the config file
 
-The configuration file or `configfile` is `config.yaml`. It must be edited to contain the paths to your data and the parameters you want to use. `Snakefile` and `config.yaml` should describe all the inputs, parameters, and commands needed to produce the desired output.
+The configuration file is `config.yaml`. It must be edited to contain the paths to your data and the parameters you want to use. `Snakefile` and `config.yaml` should describe all the inputs, parameters, and commands needed to produce the desired output.
 
 ### Run Snakemake
 
@@ -197,28 +278,43 @@ Tourmaline steps covered in this section (logic described below):
 
 #### Rules
 
-Snakemake works by executing rules, defined in the `Snakefile`. Rules specify commands and outputs but most critically inputs, which dictate which other rules must be run beforehand to generate those inputs. By defining pseudo-rules at the beginning of the `Snakefile`, we can specify desired endpoints as "inputs" that force execution of the whole workflow or just part of it. When a Snakemake command is run, only those rules that need to be executed to produce the requested inputs will be run. Before proceeding, you should familiarize yourself with Snakemake using the [documentation](https://snakemake.readthedocs.io), and create your own simple Snakemake workflow to understand how it works.
+Snakemake works by executing rules, defined in the `Snakefile`. Rules specify commands and outputs but most critically inputs, which dictate which other rules must be run beforehand to generate those inputs. By defining pseudo-rules at the beginning of the `Snakefile`, we can specify desired endpoint targets as "inputs" that force execution of the whole workflow or just part of it. When a Snakemake command is run, only those rules that need to be executed to produce the requested target will be run. Before proceeding, you should familiarize yourself with Snakemake using the [documentation](https://snakemake.readthedocs.io) or follow the tutorial [here](https://github.com/cuttlefishh/tutorials/tree/master/snakemake) to create your own simple Snakemake workflow and understand how it works.
 
-Tourmaline provides Snakemake rules for Deblur (single-end) and DADA2 (single-end and paired-end). For each type of processing, the `denoise` rule imports data and runs denoising (steps 1 and 2), the `diversity` rule does representative sequence curation and core diversity analyses (steps 3 and 4), the `stats` rule runs group significance and other tests (optional), and the `report` rule generates the QC report (step 5). Pausing after step 2 allows you to make changes before proceeding:
+#### Directed Acyclic Graph (DAG)
+
+Snakemake provides the command option `--dag` to generate a directed acyclic graph (DAG) of the jobs (rules) that will be run. The DAG is basically a graph that shows the flow and order of rules to reach your desired target. For example, to get a graph (PNG file) of the rules run when setting the rule `snakemake dada2_pe_denoise` as your target, run this command:
+
+```
+snakemake dada2_pe_denoise --dag | dot -Tpng > dag.png
+```
+
+#### Dry run and print shell commands
+
+To see which jobs (rules) and commands will be run by the workflow, use the options `--dryrun` and `--printshellcmds`, respectively. `--dryrun` will prevent the workflow from being executed. `--printshellcmds` can be used with our without `--dryrun`:
+
+```
+snakemake dada2_pe_denoise --dryrun --printshellcmds
+```
+
+#### Tourmaline rules
+
+Tourmaline provides Snakemake rules for Deblur (single-end) and DADA2 (single-end and paired-end). For each type of processing, the `denoise` rule imports data and runs denoising (steps 1 and 2); the `diversity` rule does representative sequence curation, core diversity analyses, and alpha and beta group significance and other tests (steps 3 and 4); and the `report` rule generates the QC report (step 5). Pausing after step 2 allows you to make changes before proceeding:
 
 * Check the table summaries and representative sequence lengths to determine if Deblur or DADA2 parameters need to be modified. If so, you can rename the output directories and then rerun the `denoise` rule.
 * View the table visualization to decide an appropriate subsampling (rarefaction) depth. Then modify the parameters `alpha_max_depth` and `core_sampling_depth` in `config.yaml`.
 * Filter your biom table and representative sequences to remove unwanted sequences. For example, if your amplicon is 16S rRNA, you may want to filter out chloroplast/mitochondria sequences. You should keep the same filenames so that Snakemake will recognize them; you can save the old versions with different names if you don't want to overwrite them.
 
-##### Deblur (single-end)
+##### DADA2 (paired-end)
 
 ```
 # steps 1-2
-snakemake deblur_se_denoise
+snakemake dada2_pe_denoise
 
 # steps 3-4
-snakemake deblur_se_diversity
-
-# statistical analyses
-snakemake deblur_se_stats
+snakemake dada2_pe_diversity
 
 # step 5
-snakemake deblur_se_report
+snakemake dada2_pe_report
 ```
 
 ##### DADA2 (single-end)
@@ -230,30 +326,28 @@ snakemake dada2_se_denoise
 # steps 3-4
 snakemake dada2_se_diversity
 
-# statistical analyses
-snakemake dada2_se_stats
-
 # step 5
 snakemake dada2_se_report
 ```
 
-##### DADA2 (paired-end)
+##### Deblur (single-end)
 
 ```
 # steps 1-2
-snakemake dada2_pe_denoise
+snakemake deblur_se_denoise
 
 # steps 3-4
-snakemake dada2_pe_diversity
-
-# statistical analyses
-snakemake dada2_pe_stats
+snakemake deblur_se_diversity
 
 # step 5
-snakemake dada2_pe_report
+snakemake deblur_se_report
 ```
 
-That's it. Just run one of these commands and let Snakemake do its magic. The results will be placed in organized directories inside your working directory:
+That's it. Just run one of these commands and let Snakemake do its magic.
+
+## Output
+
+The results will be placed in organized directories inside your working directory:
 
 ```
 01-imported
@@ -261,6 +355,76 @@ That's it. Just run one of these commands and let Snakemake do its magic. The re
 03-repseqs
 04-diversity
 05-reports
+```
+
+The output files of each command (shown for DADA2 paired-end) are as follows:
+
+##### dada2_pe_denoise (steps 1-2)
+
+```
+01-imported/fastq_pe.qza
+01-imported/fastq_illumina_run.txt
+01-imported/fastq_illumina_run.log
+02-denoised/data2-pe/stats.qza
+02-denoised/data2-pe/table.qza
+02-denoised/data2-pe/representative_sequences.qza
+02-denoised/data2-pe/table.qzv
+02-denoised/data2-pe/table.biom
+02-denoised/data2-pe/table_summary_features.txt
+02-denoised/data2-pe/table_summary_samples.txt
+02-denoised/data2-pe/representative_sequences.fasta
+02-denoised/data2-pe/representative_sequences.qzv
+02-denoised/data2-pe/representative_sequences_amplicon_type.txt
+02-denoised/data2-pe/representative_sequences_lengths.txt
+02-denoised/data2-pe/representative_sequences_lengths_describe.tsv
+02-denoised/dada2-pe/representative_sequences_md5_status.txt
+```
+
+##### dada2_pe_diversity (steps 3-4)
+
+```
+01-imported/refseqs.qza
+01-imported/reftax.qza
+01-imported/classifier.qza
+03-repseqs/dada2-pe/taxonomy.qza
+03-repseqs/dada2-pe/taxonomy.qzv
+03-repseqs/dada2-pe/aligned_representative_sequences.qza
+03-repseqs/dada2-pe/masked_aligned_representative_sequences.qza
+03-repseqs/dada2-pe/unrooted_tree.qza
+03-repseqs/dada2-pe/rooted_tree.qza
+03-repseqs/dada2-pe/aligned_dna_sequences.fasta
+03-repseqs/dada2-pe/aligned_dna_sequences_gaps.txt
+03-repseqs/dada2-pe/aligned_dna_sequences_gaps_describe.tsv
+04-diversity/dada2-pe/taxa_barplot.qzv
+04-diversity/dada2-pe/unweighted_unifrac_pcoa_results.qza
+04-diversity/dada2-pe/observed_otus_vector.qza
+04-diversity/dada2-pe/unweighted_unifrac_emperor.qzv
+04-diversity/dada2-pe/weighted_unifrac_pcoa_results.qza
+04-diversity/dada2-pe/weighted_unifrac_distance_matrix.qza
+04-diversity/dada2-pe/unweighted_unifrac_distance_matrix.qza
+04-diversity/dada2-pe/bray_curtis_pcoa_results.qza
+04-diversity/dada2-pe/bray_curtis_distance_matrix.qza
+04-diversity/dada2-pe/jaccard_pcoa_results.qza
+04-diversity/dada2-pe/shannon_vector.qza
+04-diversity/dada2-pe/jaccard_distance_matrix.qza
+04-diversity/dada2-pe/rarefied_table.qza
+04-diversity/dada2-pe/bray_curtis_emperor.qzv
+04-diversity/dada2-pe/faith_pd_vector.qza
+04-diversity/dada2-pe/jaccard_emperor.qzv
+04-diversity/dada2-pe/evenness_vector.qza
+04-diversity/dada2-pe/weighted_unifrac_emperor.qzv
+04-diversity/dada2-pe/alpha_rarefaction.qzv
+04-diversity/dada2-pe/unweighted_unifrac_group_significance.qzv
+# ADD OTHER ALPHA AND BETA DIVERSITY GROUP SIGNIFICANCE FILES
+```
+
+##### dada2_pe_report (step 5)
+
+```
+01-imported/fastq_pe_count.csv
+01-imported/fastq_pe_count_describe.tsv
+05-reports/processing.txt
+05-reports/report_dada2-pe.txt
 ```
 
 ## Logic
@@ -281,6 +445,7 @@ Answer the following questions to determine the best parameters for processing a
 #### Assess sequence data
 
 * What type and length of sequencing was used? (e.g., MiSeq 2x150bp)
+* Were all my samples sequenced in the same sequencing run? (Rule check_illumina_run will check for this.)
 * Do I have long enough sequening to do paired-end analysis, or do I have to do single-end analysis only?
 * What sequence pre-processing has been done already: Demultiplexing? Quality filtering and FastQC? Primer removal? Merging of paired reads?
 
@@ -291,8 +456,8 @@ Answer the following questions to determine the best parameters for processing a
 
 #### Format metadata and sequence data
 
-* Is my metadata file properly formatted? See [Metadata in QIIME 2](https://docs.qiime2.org/2018.6/tutorials/metadata/), the [EMP Metadata Guide](http://www.earthmicrobiome.org/protocols-and-standards/metadata-guide/), and [QIIMP](https://qiita.ucsd.edu/iframe/?iframe=qiimp) for help formatting your metadata.
-* Is my sequence data demultiplexed, in `.fastq.gz` format, and described in a QIIME 2 fastq manifest file? See [Fastq Manifest Formats](https://docs.qiime2.org/2018.6/tutorials/importing/#fastq-manifest-formats) from QIIME 2 for instructions for creating this file.
+* Is my metadata file properly formatted? See [Metadata in QIIME 2](https://docs.qiime2.org/2020.2/tutorials/metadata/), the [EMP Metadata Guide](http://www.earthmicrobiome.org/protocols-and-standards/metadata-guide/), and [QIIMP](https://qiita.ucsd.edu/iframe/?iframe=qiimp) for help formatting your metadata.
+* Is my sequence data demultiplexed, in `.fastq.gz` format, and described in a QIIME 2 fastq manifest file? See [Fastq Manifest Formats](https://docs.qiime2.org/2020.2/tutorials/importing/#fastq-manifest-formats) from QIIME 2 for instructions for creating this file.
 * Are my reference sequences and taxonomy properly formatted for QIIME 2?
 * Is my config file updated with the file paths and parameters I want to use?
 
@@ -332,9 +497,7 @@ First consult table summary and run alpha rarefaction to decide on a rarefaction
 * Beta diversity: distance matrices (un/weighted UniFrac, Bray-Curtis, Jaccard), principal coordinates, Emperor plots, beta group significance.
 * Taxonomy barplots.
 
-### Step 4.1: Statistical analyses
-
-Run statistical tests on your data, such as group significance tests. These rules are optional, and the output does not go into the QC report. (This functionality is currently minimal.)
+* Run group significance tests for alpha and beta diversity.
 
 ### Step 5: Quality control report
 

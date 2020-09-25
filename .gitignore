@@ -1,0 +1,7 @@
+00-data
+01-imported
+02-denoised
+03-repseqs
+04-diversity
+workflow*
+.gitignore
