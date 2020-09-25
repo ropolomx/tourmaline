@@ -1,0 +1,116 @@
+#SampleID	Pig	Trial	SampleType	Tissue	treatment
+Lcec7A	7A	A	lum	cecum	sal 
+Lcec7B	7B	B	lum	cecum	sal 
+Lcec8A	8A	A	lum	cecum	sal 
+Lcec8B	8B	B	lum	cecum	sal 
+Lcec9A	9A	A	lum	cecum	sal-tyl
+Lcec9B	9B	B	lum	cecum	sal-tyl
+Lcec10A	10A	A	lum	cecum	sal-tyl
+Lcec10B	10B	B	lum	cecum	sal-tyl
+Lcec11A	11A	A	lum	cecum	sal-chlortet
+Lcec11B	11B	B	lum	cecum	sal-chlortet
+Lcec12A	12A	A	lum	cecum	sal-chlortet
+Lcec12B	12B	B	lum	cecum	sal-chlortet
+Ldc7A	7A	A	lum	desc colon	sal 
+Ldc7B	7B	B	lum	desc colon	sal 
+Ldc8A	8A	A	lum	desc colon	sal 
+Ldc9A	9A	A	lum	desc colon	sal-tyl
+Ldc9B	9B	B	lum	desc colon	sal-tyl
+Ldc10A	10A	A	lum	desc colon	sal-tyl
+Ldc10B	10B	B	lum	desc colon	sal-tyl
+Ldc11A	11A	A	lum	desc colon	sal-chlortet
+Ldc11B	11B	B	lum	desc colon	sal-chlortet
+Ldc12A	12A	A	lum	desc colon	sal-chlortet
+Ldc12B	12B	B	lum	desc colon	sal-chlortet
+Mcec7A	7A	A	muc	cecum	sal 
+Mcec7B	7B	B	muc	cecum	sal 
+Mcec8A	8A	A	muc	cecum	sal 
+Mcec8B	8B	B	muc	cecum	sal 
+Mcec9A	9A	A	muc	cecum	sal-tyl
+Mcec9B	9B	B	muc	cecum	sal-tyl
+Mcec10A	10A	A	muc	cecum	sal-tyl
+Mcec10B	10B	B	muc	cecum	sal-tyl
+Mcec11A	11A	A	muc	cecum	sal-chlortet
+Mcec11B	11B	B	muc	cecum	sal-chlortet
+Mcec12B	12B	B	muc	cecum	sal-chlortet
+Mdc7A	7A	A	muc	desc colon	sal 
+Mdc7B	7B	B	muc	desc colon	sal 
+Mdc8A	8A	A	muc	desc colon	sal 
+Mdc8B	8B	B	muc	desc colon	sal 
+Mdc9A	9A	A	muc	desc colon	sal-tyl
+Mdc9B	9B	B	muc	desc colon	sal-tyl
+Mdc10A	10A	A	muc	desc colon	sal-tyl
+Mdc11A	11A	A	muc	desc colon	sal-chlortet
+Mdc11B	11B	B	muc	desc colon	sal-chlortet
+Mdc12A	12A	A	muc	desc colon	sal-chlortet
+Mdc12B	12B	B	muc	desc colon	sal-chlortet
+Mile7A	7A	A	muc	ileum	sal 
+Mile7B	7B	B	muc	ileum	sal 
+Mile8A	8A	A	muc	ileum	sal 
+Mile8B	8B	B	muc	ileum	sal 
+Mile9A	9A	A	muc	ileum	sal-tyl
+Mile9B	9B	B	muc	ileum	sal-tyl
+Mile10A	10A	A	muc	ileum	sal-tyl
+Mile10B	10B	B	muc	ileum	sal-tyl
+Mile11A	11A	A	muc	ileum	sal-chlortet
+Mile12A	12A	A	muc	ileum	sal-chlortet
+Mile12B	12B	B	muc	ileum	sal-chlortet
+LcecA1	1A	A	lum	cecum	control
+LcecA2	2A	A	lum	cecum	control
+LcecA3	3A	A	lum	cecum	tylosin
+LcecA4	4A	A	lum	cecum	tylosin
+LcecA5	5A	A	lum	cecum	chlortet
+LcecA6	6A	A	lum	cecum	chlortet
+LcecB1	1B	B	lum	cecum	control
+LcecB2	2B	B	lum	cecum	control
+LcecB3	3B	B	lum	cecum	tylosin
+LcecB4	4B	B	lum	cecum	tylosin
+LcecB5	5B	B	lum	cecum	chlortet
+LcecB6	6B	B	lum	cecum	chlortet
+LdcA2	2A	A	lum	desc colon	control
+LdcA3	3A	A	lum	desc colon	tylosin
+LdcA4	4A	A	lum	desc colon	tylosin
+LdcA5	5A	A	lum	desc colon	chlortet
+LdcA6	6A	A	lum	desc colon	chlortet
+LdcB1	1B	B	lum	desc colon	control
+LdcB2	2B	B	lum	desc colon	control
+LdcB3	3B	B	lum	desc colon	tylosin
+LdcB4	4B	B	lum	desc colon	tylosin
+LdcB5	5B	B	lum	desc colon	chlortet
+LdcB6	6B	B	lum	desc colon	chlortet
+McecA1	1A	A	muc	cecum	control
+McecA2	2A	A	muc	cecum	control
+McecA3	3A	A	muc	cecum	tylosin
+McecA4	4A	A	muc	cecum	tylosin
+McecA5	5A	A	muc	cecum	chlortet
+McecA6	6A	A	muc	cecum	chlortet
+McecB1	1B	B	muc	cecum	control
+McecB2	2B	B	muc	cecum	control
+McecB3	3B	B	muc	cecum	tylosin
+McecB4	4B	B	muc	cecum	tylosin
+McecB5	5B	B	muc	cecum	chlortet
+McecB6	6B	B	muc	cecum	chlortet
+MdcA1	1A	A	muc	desc colon	control
+MdcA2	2A	A	muc	desc colon	control
+MdcA3	3A	A	muc	desc colon	tylosin
+MdcA4	4A	A	muc	desc colon	tylosin
+MdcA5	5A	A	muc	desc colon	chlortet
+MdcA6	6A	A	muc	desc colon	chlortet
+MdcB1	1B	B	muc	desc colon	control
+MdcB2	2B	B	muc	desc colon	control
+MdcB3	3B	B	muc	desc colon	tylosin
+MdcB4	4B	B	muc	desc colon	tylosin
+MdcB5	5B	B	muc	desc colon	chlortet
+MdcB6	6B	B	muc	desc colon	chlortet
+MileA1	1A	A	muc	ileum	control
+MileA2	2A	A	muc	ileum	control
+MileA3	3A	A	muc	ileum	tylosin
+MileA4	4A	A	muc	ileum	tylosin
+MileA5	5A	A	muc	ileum	chlortet
+MileA6	6A	A	muc	ileum	chlortet
+MileB1	1B	B	muc	ileum	control
+MileB2	2B	B	muc	ileum	control
+MileB3	3B	B	muc	ileum	tylosin
+MileB4	4B	B	muc	ileum	tylosin
+MileB5	5B	B	muc	ileum	chlortet
+MileB6	6B	B	muc	ileum	chlortet

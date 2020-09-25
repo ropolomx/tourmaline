@@ -71,6 +71,12 @@ rule dada2_se_report:
 
 # -----------------------------------------------------------------------------
 
+rule pe_quality_control:
+    input:
+        "~00-quality-control/fastqc-report/multiqc_report.html",
+        "~00-quality-control/fastp-report/multiqc_report.html",
+        "00-data/manifest_pe.csv"
+
 rule dada2_pe_denoise:
     input:
         "01-imported/fastq_illumina_run.log",
@@ -80,12 +86,8 @@ rule dada2_pe_denoise:
         "02-denoised/dada2-pe/table_summary_features.txt",
         "02-denoised/dada2-pe/representative_sequences.qzv",
         "02-denoised/dada2-pe/representative_sequences_amplicon_type.txt",
-<<<<<<< HEAD:Snakefile
-        "02-denoised/dada2-pe/representative_sequences_lengths_describe.tsv",
-=======
         "02-denoised/dada2-pe/representative_sequences_lengths_describe.md",
         "02-denoised/dada2-pe/representative_sequences_md5_status.txt"
->>>>>>> bd07232822753585543c9ee7d1ead1dbed0c05bb:Snakefile_linux
 
 rule dada2_pe_diversity:
     input:
@@ -107,6 +109,41 @@ rule dada2_pe_report:
 
 # RULES -----------------------------------------------------------------------
 
+### custom rule to run fastqc on ~00-raw-data
+rule run_fastqc:
+    output:
+        "~00-quality-control/fastqc-report/multiqc_report.html"
+    threads: 4
+    priority: 2
+    conda:
+        "envs/fastp.yaml"
+    shell:
+        "fastqc -o ~00-quality-control/fastqc-files -t 4 ~00-raw-data/*.fastq.gz; " 
+        "multiqc -o ~00-quality-control/fastqc-report/ ~00-quality-control/fastqc-files/*; "
+
+
+### custom rule to run fastp on ~00-raw-data
+rule run_fastp:
+    output:
+        "~00-quality-control/fastp-report/multiqc_report.html"
+    threads: 4
+    priority: 3
+    conda:
+        "envs/fastp.yaml"
+    shell:
+        "bash scripts/fastp_script.sh; "
+        "multiqc -o ~00-quality-control/fastp-report ~00-quality-control/fastp-files/*; "
+        "cp ~00-raw-data/metadata.tsv 00-data; "
+
+### custom rule to generate a manifest file from the filenames in data-00
+rule generate_manifest_pe_file:
+    output:
+        config["manifest_pe"]
+    priority: 1
+    shell:
+        "python3 $PWD/scripts/manifest_script.py $PWD/00-data; "
+
+
 rule import_fastq_se_demux:
     input:
         config["manifest_se"]
@@ -118,16 +155,6 @@ rule import_fastq_se_demux:
         "--input-path {input} "
         "--output-path {output} "
         "--input-format SingleEndFastqManifestPhred33"
-<<<<<<< HEAD:Snakefile
-
-# custom rule to generate a manifest file from the filenames in data-00
-rule generate_manifest_pe_file:
-    output:
-        config["manifest_pe"]
-    shell:
-        "python3 $PWD/scripts/manifest_script.py $PWD/00-data"
-=======
->>>>>>> bd07232822753585543c9ee7d1ead1dbed0c05bb:Snakefile_linux
 
 rule import_fastq_pe_demux:
     input:
@@ -135,13 +162,11 @@ rule import_fastq_pe_demux:
     output:
         "01-imported/fastq_pe.qza"
     shell:
-        "time qiime tools import "
+        "qiime tools import "
         "--type 'SampleData[PairedEndSequencesWithQuality]' "
         "--input-path {input} "
         "--output-path {output} "
         "--input-format PairedEndFastqManifestPhred33"
-<<<<<<< HEAD:Snakefile
-=======
 
 # mac: gzcat (zcat requires extension .Z) / linux: zcat
 # change gzcat/zcat to cat if fastq files are not gzipped (but they should be)
@@ -159,7 +184,6 @@ rule check_illumina_run:
         "zcat $line | head -n 1 | sed 's/^@//' | cut -d ':' -f1-3; "
         "done > {output.runs}; "
         "echo -n 'Number of Illumina runs in {input}:' > {output.log}; cat {output.runs} | cut -d',' -f2 | sort | uniq | wc -l >> {output.log}"
->>>>>>> bd07232822753585543c9ee7d1ead1dbed0c05bb:Snakefile_linux
 
 # mac: gzcat (zcat requires extension .Z) / linux: zcat
 # change gzcat/zcat to cat if fastq files are not gzipped (but they should be)
@@ -264,7 +288,7 @@ rule denoise_dada2_se:
         repseqs="02-denoised/dada2-se/representative_sequences.qza",
         stats="02-denoised/dada2-se/stats.qza"
     shell:
-        "time qiime dada2 denoise-single "
+        "qiime dada2 denoise-single "
         "--i-demultiplexed-seqs {input} "
         "--p-trunc-len {params.trunclen} "
         "--p-trim-left {params.trimleft} "
@@ -301,19 +325,14 @@ rule denoise_dada2_pe:
         repseqs="02-denoised/dada2-pe/representative_sequences.qza",
         stats="02-denoised/dada2-pe/stats.qza",
     shell:
-        "time qiime dada2 denoise-paired "
+        "qiime dada2 denoise-paired "
         "--i-demultiplexed-seqs {input} "
         "--p-trunc-len-f {params.trunclenf} "
         "--p-trunc-len-r {params.trunclenr} "
         "--p-trim-left-f {params.trimleftf} "
         "--p-trim-left-r {params.trimleftr} "
-<<<<<<< HEAD:Snakefile
-        "--p-max-ee-f {params.maxee} "
-        "--p-max-ee-r {params.maxee} "
-=======
         "--p-max-ee-f {params.maxeef} "
         "--p-max-ee-r {params.maxeer} "
->>>>>>> bd07232822753585543c9ee7d1ead1dbed0c05bb:Snakefile_linux
         "--p-trunc-q {params.truncq} "
         "--p-chimera-method {params.chimeramethod} "
         "--p-min-fold-parent-over-abundance {params.minfoldparentoverabundance} "
@@ -530,17 +549,10 @@ rule feature_classifier_classify_consensus_blast:
     output:
         "03-repseqs/{method}/taxonomy.qza"
     shell:
-<<<<<<< HEAD:Snakefile
-        "time qiime feature-classifier classify-sklearn "
-        "--i-classifier {input.classifier} "
-        "--i-reads {input.repseqs} "
-        "--p-n-jobs -2 "
-=======
         "qiime feature-classifier classify-consensus-blast "
         "--i-query {input.query} "
         "--i-reference-reads {input.refseqs} "
         "--i-reference-taxonomy {input.reftax} "
->>>>>>> bd07232822753585543c9ee7d1ead1dbed0c05bb:Snakefile_linux
         "--o-classification {output}"
 
 rule visualize_taxonomy:
@@ -745,6 +757,61 @@ rule diversity_beta_group_significance:
         "--o-visualization {output} "
         "--p-pairwise"
 
+
+### custom rule to include permanova commands
+rule diversity_additional_metrics:
+    input:
+        "04-diversity/dada2-pe/bray_curtis_distance_matrix.qza", 
+        "04-diversity/dada2-pe/jaccard_distance_matrix.qza",
+        "04-diversity/dada2-pe/unweighted_unifrac_distance_matrix.qza",
+        "04-diversity/dada2-pe/weighted_unifrac_distance_matrix.qza",
+        "02-denoised/dada2-pe/table.qza"
+    output:
+        "04-diversity/dada2-pe/bray-curtis-permanova.qzv",
+        "04-diversity/dada2-pe/jaccard-permanova.qzv",
+        "04-diversity/dada2-pe/unweighted-unifrac-permanova.qzv",
+        "04-diversity/dada2-pe/weighted-unifrac-permanova.qzv",
+        "04-diversity/dada2-pe/pielous_evenness_vector.qza"
+    shell:
+        "qiime diversity beta-group-significance "
+        "--i-distance-matrix 04-diversity/dada2-pe/bray_curtis_distance_matrix.qza "
+        "--m-metadata-file 00-data/metadata.tsv "
+        "--m-metadata-column treatment "
+        "--p-method permanova "
+        "--p-pairwise "
+        "--p-permutations 999 "
+        "--o-visualization 04-diversity/dada2-pe/bray-curtis-permanova.qzv "
+        "qiime diversity beta-group-significance "
+        "--i-distance-matrix 04-diversity/dada2-pe/jaccard_distance_matrix.qza "
+        "--m-metadata-file 00-data/metadata.tsv "
+        "--m-metadata-column treatment "
+        "--p-method permanova "
+        "--p-pairwise "
+        "--p-permutations 999 "
+        "--o-visualization 04-diversity/dada2-pe/jaccard-permanova.qzv "
+        "qiime diversity beta-group-significance "
+        "--i-distance-matrix 04-diversity/dada2-pe/unweighted_unifrac_distance_matrix.qza "
+        "--m-metadata-file 00-data/metadata.tsv "
+        "--m-metadata-column treatment "
+        "--p-method permanova "
+        "--p-pairwise "
+        "--p-permutations 999 "
+        "--o-visualization 04-diversity/dada2-pe/unweighted-unifrac-permanova.qzv "
+        "qiime diversity beta-group-significance "
+        "--i-distance-matrix 04-diversity/dada2-pe/weighted_unifrac_distance_matrix.qza "
+        "--m-metadata-file 00-data/metadata.tsv "
+        "--m-metadata-column treatment "
+        "--p-method permanova "
+        "--p-pairwise "
+        "--p-permutations 999 "
+        "--o-visualization 04-diversity/dada2-pe/weighted-unifrac-permanova.qzv "
+        "qiime diversity-lib pielou-evenness "
+        "--i-table 02-denoised/dada2-pe/table.qza "
+        "--p-drop-undefined-samples "
+        "--o-vector 04-diversity/dada2-pe/pielous_evenness_vector.qza"
+'''
+
+
 rule summarize_metadata:
     input:
         metadata=config["metadata"]
@@ -752,13 +819,6 @@ rule summarize_metadata:
         "05-reports/metadata_summary.md"
     run:
         df = pd.read_csv(input.metadata, sep='\t')
-<<<<<<< HEAD:Snakefile
-        cols = ['project_name', 'experiment_design_description',
-                'target_gene', 'target_subfragment', 'pcr_primers',
-                'pcr_primer_names', 'platform', 'instrument_model',
-                'run_center', 'run_date']
-        ser = pd.Series()
-=======
         cols1 = ['project_name', 'experiment_design_description', 
                  'target_gene', 'target_subfragment', 'pcr_primers', 
                  'pcr_primer_names', 'platform', 'instrument_model',
@@ -766,7 +826,6 @@ rule summarize_metadata:
         cols2 = sorted(list(set(df.columns) - set(cols1)))
         cols = cols1 + cols2
         df2 = pd.DataFrame(columns =[0,1], index=cols)
->>>>>>> bd07232822753585543c9ee7d1ead1dbed0c05bb:Snakefile_linux
         for col in cols:
             if col in df.columns:
                 vc = df[col].value_counts()
@@ -987,10 +1046,6 @@ rule generate_report_html:
     output:
         "05-reports/report_{method}.html"
     shell:
-<<<<<<< HEAD:Snakefile
-        "head -n 13 {input.processing} {input.fastq} {input.samples} {input.features} "
-        "{input.amplicontype} {input.repseqs} {input.alignment} > {output}"
-=======
         "pandoc -i {input} -o {output};"
         "echo '<!DOCTYPE html>' > header.html;"
         "echo '<html>' >> header.html;"
@@ -1008,4 +1063,3 @@ rule generate_report_html:
 
 
 
->>>>>>> bd07232822753585543c9ee7d1ead1dbed0c05bb:Snakefile_linux
